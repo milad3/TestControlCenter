@@ -1,0 +1,33 @@
+﻿<Window x:Class="TestControlCenter.Windows.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TestControlCenter.Windows"
+        mc:Ignorable="d"
+        FontFamily="{StaticResource MainFont}"
+        FlowDirection="RightToLeft"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Title="ورود" SizeToContent="Height" Width="350" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Grid Margin="15" FocusManager.FocusedElement="{Binding ElementName=UsernameTextBox}">
+        <StackPanel>
+            <Label HorizontalAlignment="Center" Foreground="Gray">ورود به نرم افزار آزمون عملی مجتمع فنی تهران</Label>
+            <Image HorizontalAlignment="Center" Height="44" Opacity=".4" Margin="15" Source="/TestControlCenter;component/Resources/login.png"></Image>
+            <TextBox x:Name="UsernameTextBox" TextBlock.TextAlignment="Center" materialDesign:HintAssist.Hint="نام کاربری"></TextBox>
+            <PasswordBox PasswordChar="*" TextBlock.TextAlignment="Center" Margin="0,20,0,0" materialDesign:HintAssist.Hint="رمز عبور"></PasswordBox>
+            <CheckBox Margin="0,20,0,0">ذخیره نام کاربری و رمز عبور</CheckBox>
+            <Button Click="LoginButton_Click" Margin="0,20,0,0">
+                <Button.Background>
+                    <RadialGradientBrush>
+                        <GradientStop Color="#FFECECEC" Offset="1"/>
+                        <GradientStop Color="White"/>
+                    </RadialGradientBrush>
+                </Button.Background> ورود
+            </Button>
+            <TextBlock Margin="0,20,0,0">
+                <Hyperlink NavigateUri="http://www.google.com" RequestNavigate="ForgetPasswordLink_RequestNavigate">یادآوری رمز عبور</Hyperlink>
+            </TextBlock>
+        </StackPanel>
+    </Grid>
+</Window>
