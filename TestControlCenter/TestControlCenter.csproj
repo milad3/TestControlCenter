@@ -402,27 +402,27 @@
     <Resource Include="License-LGPL.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SqlFix\x64\concrt140.dll" />
-    <Content Include="SqlFix\x64\cvextern.dll" />
-    <Content Include="SqlFix\x64\e_sqlite3.dll" />
-    <Content Include="SqlFix\x64\msvcp140.dll" />
-    <Content Include="SqlFix\x64\msvcp140_1.dll" />
-    <Content Include="SqlFix\x64\msvcp140_2.dll" />
-    <Content Include="SqlFix\x64\msvcp140_codecvt_ids.dll" />
-    <Content Include="SqlFix\x64\opencv_videoio_ffmpeg440_64.dll" />
-    <Content Include="SqlFix\x64\SQLite.Interop.dll" />
-    <Content Include="SqlFix\x64\vcruntime140.dll" />
-    <Content Include="SqlFix\x64\vcruntime140_1.dll" />
-    <Content Include="SqlFix\x86\concrt140.dll" />
-    <Content Include="SqlFix\x86\cvextern.dll" />
-    <Content Include="SqlFix\x86\e_sqlite3.dll" />
-    <Content Include="SqlFix\x86\msvcp140.dll" />
-    <Content Include="SqlFix\x86\msvcp140_1.dll" />
-    <Content Include="SqlFix\x86\msvcp140_2.dll" />
-    <Content Include="SqlFix\x86\msvcp140_codecvt_ids.dll" />
-    <Content Include="SqlFix\x86\opencv_videoio_ffmpeg440.dll" />
-    <Content Include="SqlFix\x86\SQLite.Interop.dll" />
-    <Content Include="SqlFix\x86\vcruntime140.dll" />
+    <Content Include="SqlFix\x64_FIX\concrt140.dll" />
+    <Content Include="SqlFix\x64_FIX\cvextern.dll" />
+    <Content Include="SqlFix\x64_FIX\e_sqlite3.dll" />
+    <Content Include="SqlFix\x64_FIX\msvcp140.dll" />
+    <Content Include="SqlFix\x64_FIX\msvcp140_1.dll" />
+    <Content Include="SqlFix\x64_FIX\msvcp140_2.dll" />
+    <Content Include="SqlFix\x64_FIX\msvcp140_codecvt_ids.dll" />
+    <Content Include="SqlFix\x64_FIX\opencv_videoio_ffmpeg440_64.dll" />
+    <Content Include="SqlFix\x64_FIX\SQLite.Interop.dll" />
+    <Content Include="SqlFix\x64_FIX\vcruntime140.dll" />
+    <Content Include="SqlFix\x64_FIX\vcruntime140_1.dll" />
+    <Content Include="SqlFix\x86_FIX\concrt140.dll" />
+    <Content Include="SqlFix\x86_FIX\cvextern.dll" />
+    <Content Include="SqlFix\x86_FIX\e_sqlite3.dll" />
+    <Content Include="SqlFix\x86_FIX\msvcp140.dll" />
+    <Content Include="SqlFix\x86_FIX\msvcp140_1.dll" />
+    <Content Include="SqlFix\x86_FIX\msvcp140_2.dll" />
+    <Content Include="SqlFix\x86_FIX\msvcp140_codecvt_ids.dll" />
+    <Content Include="SqlFix\x86_FIX\opencv_videoio_ffmpeg440.dll" />
+    <Content Include="SqlFix\x86_FIX\SQLite.Interop.dll" />
+    <Content Include="SqlFix\x86_FIX\vcruntime140.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
