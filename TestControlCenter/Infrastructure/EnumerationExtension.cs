@@ -16,7 +16,7 @@ namespace TestControlCenter.Infrastructure
 
         public Type EnumType
         {
-            get { return _enumType; }
+            get => _enumType;
             private set
             {
                 if (_enumType == value)

@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:TestControlCenter"
              xmlns:infra="clr-namespace:TestControlCenter.Infrastructure"
-             xmlns:conv="clr-namespace:TestControlCenter.Converter"
-             StartupUri="MainWindow.xaml">
+             xmlns:conv="clr-namespace:TestControlCenter.Converter">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -12,6 +11,8 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Grey.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Orange.xaml" />
+
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/TabControlTemplates.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <FontFamily x:Key="MainFont">pack://application:,,,/Resources/#IRANSans Medium</FontFamily>
             <BooleanToVisibilityConverter x:Key="BoolToVis" />

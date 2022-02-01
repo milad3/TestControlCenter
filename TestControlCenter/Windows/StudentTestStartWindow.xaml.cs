@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 using TestControlCenterDomain;
 using TestControlCenter.Models;
 using TestControlCenter.Services;
@@ -10,24 +9,27 @@ namespace TestControlCenter.Windows
     /// <summary>
     /// Interaction logic for TestStartWindow.xaml
     /// </summary>
-    public partial class TestStartWindow : Window
+    public partial class StudentTestStartWindow : Window
     {
-        public TestItem TestItem { get; set; }
-
-        public List<Student> Students { get; internal set; }
-        
         public TestStartViewModel ViewModel { get; private set; }
 
         public bool StartExam { get; set; } = false;
 
-        public TestStartWindow()
+        public StudentTestStartWindow()
         {
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel = ViewModelsHelper.GetTestStartViewModel(Students, TestItem);
+            ViewModel = await ViewModelsHelper.GetTestStartViewModelForStudent();
+            studentNameButtonText.Text = $"برای ({ViewModel.SelectedStudent.Name})";
+
+            if (ViewModel.TestItem == null)
+            {
+                App.LogoutLogin(this);
+                return;
+            }
 
             DataContext = ViewModel;
 
@@ -36,6 +38,8 @@ namespace TestControlCenter.Windows
                 NotificationsHelper.Error("برای این آزمون هیچ سوالی ثبت نشده است.", "خطا");
                 Close();
             }
+
+            LoadingElem.Visibility = Visibility.Hidden;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -79,17 +83,44 @@ namespace TestControlCenter.Windows
         {
             StartButton.IsEnabled = false;
 
-            var result =  await CommunicationService.StartTest(TestItem, ViewModel.SelectedStudent);
-            if(!result)
+            var result =  await CommunicationService.StartTest(ViewModel.TestItem, ViewModel.SelectedStudent);
+
+            StartButton.IsEnabled = true;
+
+            if (!result)
             {
                 NotificationsHelper.Error("امکان شروع آزمون وجود ندارد.", "خطا");
                 return;
             }
 
-            StartButton.IsEnabled = true;
-
             StartExam = true;
+
+            if (ViewModel.TestItem.Questions.Count < 1)
+            {
+                NotificationsHelper.Error("آزمون سوالی ندارد! امکان شروع آزمون نیست.", "خطا");
+                return;
+            }
+
+            var window = new ExamWindow(ViewModel.TestItem, ViewModel.SelectedStudent)
+            {
+                Owner = this
+            };
+
+            Hide();
+
+            window.Show();
+
+            window.ExamEndedEvent += Window_ExamEndedEvent;
+        }
+
+        private void Window_ExamEndedEvent(object sender, System.EventArgs e)
+        {
             Close();
+        }
+
+        private void Window_Closed(object sender, System.EventArgs e)
+        {
+            App.LogoutLogin(this);
         }
     }
 }

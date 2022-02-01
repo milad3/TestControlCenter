@@ -54,7 +54,7 @@ namespace TestControlCenter.Tools
                 }
             }
 
-            var files = Directory.GetFiles($"{imagesDir}{testItem.Key}", "*.mftdata");
+            var files = Directory.GetFiles($"{imagesDir}{testItem.Key}", "*.retadata");
             foreach (var file in files)
             {
                 if(!File.Exists(file))
@@ -70,7 +70,7 @@ namespace TestControlCenter.Tools
             CleanUp(exportDir);
         }
 
-        public async Task<TestItem> Import(string fileName)
+        public async Task<TestItem> Import(string fileName, string key = "")
         {
             CleanUp(importDir);
 
@@ -78,12 +78,16 @@ namespace TestControlCenter.Tools
             ZipFile.ExtractToDirectory(fileName, parentDir);
             importDir = $"{importDir}\\";
 
-            var testItem = GetTestItem();            
+            var testItem = GetTestItem();
+            if(!string.IsNullOrEmpty(key))
+            {
+                testItem.Key = key;
+            }
             var coverAddress = SaveCoverImage();
             var dll = SaveProcessor();
             testItem.CoverImageAddress = coverAddress;
             testItem.ProcessorAddress = dll;
-            var images = Directory.GetFiles(importDir, "*.mftdata");
+            var images = Directory.GetFiles(importDir, "*.retadata");
             SaveAllImages(testItem, images);
 
             testItem.AddDateTime = DateTime.Now;

@@ -8,13 +8,13 @@ namespace TestControlCenter.Tools
 {
     public class ProcessorTools : IProcessorTools
     {
-        public List<Rectangle> SearchBitmap(Bitmap smallBmp, Bitmap bigBmp, double tolerance)
+        public List<ImageSearchResultItem> SearchBitmap(Bitmap smallBmp, Bitmap bigBmp, double tolerance)
         {
             GetImages(smallBmp, bigBmp, default, out BitmapData smallData, out BitmapData bigData);
             return Process(smallBmp, bigBmp, tolerance, smallData, bigData);
         }
 
-        private static List<Rectangle> Process(Bitmap smallBmp, Bitmap bigBmp, double tolerance, BitmapData smallData, BitmapData bigData)
+        private static List<ImageSearchResultItem> Process(Bitmap smallBmp, Bitmap bigBmp, double tolerance, BitmapData smallData, BitmapData bigData)
         {
             var smallStride = smallData.Stride;
             var bigStride = bigData.Stride;
@@ -26,6 +26,8 @@ namespace TestControlCenter.Tools
 
             var location = Rectangle.Empty;
             var margin = Convert.ToInt32(255.0 * tolerance);
+
+            var result = new List<ImageSearchResultItem>();
 
             unsafe
             {
@@ -73,10 +75,12 @@ namespace TestControlCenter.Tools
 
                         if (matchFound)
                         {
-                            location.X = x;
-                            location.Y = y;
-                            location.Width = smallBmp.Width;
-                            location.Height = smallBmp.Height;
+                            result.Add(new ImageSearchResultItem
+                            {
+                                X = x,
+                                Y = y,
+                                Tolerance = 1
+                            });
                             break;
                         }
 
@@ -93,13 +97,6 @@ namespace TestControlCenter.Tools
 
             bigBmp.UnlockBits(bigData);
             smallBmp.UnlockBits(smallData);
-
-            var result = new List<Rectangle>();
-
-            if (location != Rectangle.Empty)
-            {
-                result.Add(location);
-            }
 
             return result;
         }
@@ -118,10 +115,15 @@ namespace TestControlCenter.Tools
             }
         }
 
-        public List<Rectangle> SearchBitmap(Bitmap smallBmp, Bitmap bigBmp, double tolerance, Rectangle searchArea)
+        public List<ImageSearchResultItem> SearchBitmap(Bitmap smallBmp, Bitmap bigBmp, double tolerance, Rectangle searchArea)
         {
             GetImages(smallBmp, bigBmp, searchArea, out BitmapData smallData, out BitmapData bigData);
             return Process(smallBmp, bigBmp, tolerance, smallData, bigData);
+        }
+
+        public List<ImageSearchResultItem> SearchImage(string smallImageFilePath, string bigImageFilePath, double tolerance)
+        {
+            throw new NotImplementedException();
         }
     }
 }

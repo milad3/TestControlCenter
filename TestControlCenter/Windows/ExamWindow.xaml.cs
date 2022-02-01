@@ -22,7 +22,7 @@ namespace TestControlCenter.Windows
         public ExamViewModel ViewModel { get; set; }
         public bool IsFinished { get; private set; }
 
-        public ExamWindow(TestItem testItem, MftStudent student)
+        public ExamWindow(TestItem testItem, Student student)
         {
             InitializeComponent();
 
@@ -71,9 +71,9 @@ namespace TestControlCenter.Windows
 
         private async void Window_Closed(object sender, EventArgs e)
         {
-            ExamEndedEvent?.Invoke(ViewModel, null);
-
             await FinilizeExam();
+
+            ExamEndedEvent?.Invoke(ViewModel, null);
 
             GlobalValues.ExamWindow = null;
 
@@ -214,6 +214,13 @@ namespace TestControlCenter.Windows
             }
 
             NotificationsHelper.Information(ViewModel.SelectedQuestion.Hint, "راهنمایی");
+        }
+
+        private void BookmarkToggle_Click(object sender, RoutedEventArgs e)
+        {
+            var q = (TestItemQuestionViewModel)((FrameworkElement)sender).DataContext;
+
+            q.Bookmarked = !q.Bookmarked;
         }
     }
 }

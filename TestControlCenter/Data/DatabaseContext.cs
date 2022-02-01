@@ -13,7 +13,8 @@ namespace TestControlCenter.Data
             base.OnConfiguring(optionsBuilder);
 
             var conn = new SQLiteConnection(Settings.Default.DatabaseConnection);
-            // conn.SetPassword(SecurityTools.GetDatabasePassword()); TODO: set password again!
+
+            conn.SetPassword(SecurityTools.GetDatabasePassword());
             conn.Open();
 
             optionsBuilder.UseSqlite(conn);

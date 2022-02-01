@@ -13,8 +13,8 @@ namespace TestControlCenter.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        private List<MftStudent> students;
-        public List<MftStudent> Students
+        private List<Student> students;
+        public List<Student> Students
         {
             get
             {
@@ -27,14 +27,14 @@ namespace TestControlCenter.Models
                     return students.Where(x => x.Name.Contains(filter) || x.NationalCode.Contains(filter) || x.Mobile.Contains(filter)).ToList();
                 }
             }
-            set { students = value; }
+            set => students = value;
         }
         public TestItemViewModel TestItem { get; set; }
 
         private string filter;
         public string Filter
         {
-            get { return filter; }
+            get => filter;
             set
             {
                 filter = value;
@@ -44,11 +44,11 @@ namespace TestControlCenter.Models
 
         public bool StudentNotSelected => SelectedStudent == null;
 
-        private MftStudent selectedStudent;
+        private Student selectedStudent;
 
-        public MftStudent SelectedStudent
+        public Student SelectedStudent
         {
-            get { return selectedStudent; }
+            get => selectedStudent;
             set
             {
                 selectedStudent = value;
@@ -60,7 +60,7 @@ namespace TestControlCenter.Models
         private bool secondPhase;
         public bool SecondPhase
         {
-            get { return secondPhase; }
+            get => secondPhase;
             set
             {
                 secondPhase = value;

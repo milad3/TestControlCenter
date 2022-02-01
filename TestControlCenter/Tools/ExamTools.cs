@@ -42,6 +42,19 @@ namespace TestControlCenter.Tools
 
         public async Task<TestItemQuestionClueRecord> TakeRecord(bool isFinal = false, string keyName = null, bool isMouse = false)
         {
+            try
+            {
+                return await TakeRecordAction(isFinal, keyName, isMouse);
+            }
+            catch (Exception)
+            {
+                NotificationsHelper.Error("امکان ثبت پاسخ وجود ندارد.", "خطا");
+                return null;
+            }
+        }
+
+        private async Task<TestItemQuestionClueRecord> TakeRecordAction(bool isFinal, string keyName, bool isMouse)
+        {
             if (GlobalValues.Question == null)
             {
                 return null;
@@ -82,17 +95,18 @@ namespace TestControlCenter.Tools
                 }
             }
 
-            if(isFinal)
+            if (isFinal)
             {
                 ChangeExamWindowVisibility(Visibility.Hidden);
                 ChangeExamAltWindowVisibility(0);
+                GlobalValues.Question.IsAnswered = true;
 
                 await Task.Delay(1000);
             }
 
             using (var bitmap = Screenshot())
             {
-                record.ImageAddress = GlobalTools.GetNewFileName(StaticValues.ExamTempDir, ".mftdata");
+                record.ImageAddress = GlobalTools.GetNewFileName(StaticValues.ExamTempDir, ".retadata");
                 bitmap.Save(record.ImageAddress, ImageFormat.Png);
             }
 

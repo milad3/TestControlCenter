@@ -1,272 +1,506 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
+using TestControlCenter.Infrastructure;
+using TestControlCenter.Models;
+using TestControlCenter.Tools;
 using TestControlCenterDomain;
 
 namespace TestControlCenter.Services
 {
     public class CommunicationService
     {
-        public static async Task<List<MftStudent>> GetStudents(TestItem testItem)
+        public static async Task<CommunicationResult> GetInfo()
         {
-            // TODO implement
-
-
-            var result = new List<MftStudent>();
-
-            result.Add(new MftStudent
+            var result = new CommunicationResult()
             {
-                Mobile = "09108710767",
-                Name = "میلاد حسین پناهی",
-                NationalCode = "37200502147",
-                IdInServer = "jhkjasd54565",
-                Token = "56as4d6a5saslkdjhak"
-            });
+                Type = LoginResultType.NotStarted
+            };
 
-            result.Add(new MftStudent
+            try
             {
-                Mobile = "09123582789",
-                Name = "رضا طبرزدی",
-                NationalCode = "37522556644",
-                IdInServer = "xdkaasd545sa5",
-                Token = "d6a5saslkdjhakasd"
-            });
+                using (var client = new HttpClient())
+                {
+                    var response = await client.GetAsync(StaticValues.InfoUrl);
 
-            result.Add(new MftStudent
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        if (response.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            result.Type = LoginResultType.Failed;
+                        }
+                        else
+                        {
+                            result.Type = LoginResultType.CommunicationProblem;
+                        }
+                    }
+                    else
+                    {
+                        result.Type = LoginResultType.Success;
+                        result.Response = await response.Content.ReadAsStringAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
             {
-                Mobile = "09121113355",
-                Name = "محمد محمدی",
-                NationalCode = "37522556644",
-                IdInServer = "xdkaasd545sa5"
-            });
+                result.Type = LoginResultType.CommunicationProblem;
+                result.Message = ex.Message;
+            }
 
-            result.Add(new MftStudent
-            {
-                Mobile = "0911552244",
-                Name = "کریم کریمی",
-                NationalCode = "37522556644",
-                IdInServer = "xdkaasd545sa5"
-            });
+            return result;
+        }
 
-            result.Add(new MftStudent
+        public static async Task<TestItem> GetTestItem(string key)
+        {
+            var result = new TestItem();
+
+            var data = new[]
+                    {
+                        new KeyValuePair<string, string>("key", key)
+                    };
+
+            ExamItem exam = null;
+            try
             {
-                Mobile = "0911552244",
-                Name = "رسول رسولی",
-                NationalCode = "37522556644",
-                IdInServer = "xdkaasd545sa5"
-            });
+                using (var server = new ServerClient())
+                {
+                    using (var content = new FormUrlEncodedContent(data))
+                    {
+                        var response = await server.HttpClient.PostAsync(StaticValues.GetExamUrl, content);
+
+                        var rawData = await response.Content.ReadAsStringAsync();
+                        if (!string.IsNullOrEmpty(rawData))
+                        {
+                            exam = JsonConvert.DeserializeObject<ExamItem>(rawData);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            if (exam == null)
+            {
+                return null;
+            }
+
+            using (var db = new DataService())
+            {
+                using (var client = new WebClient())
+                {
+                    var item = exam;
+
+                    if (string.IsNullOrEmpty(item.File))
+                    {
+                        return null;
+                    }
+
+                    try
+                    {
+                        string fileName;
+                        var dir = $"{StaticValues.RootPath}\\temp\\";
+
+                        if (!Directory.Exists(dir))
+                        {
+                            Directory.CreateDirectory(dir);
+                        }
+
+                        do
+                        {
+                            fileName = $"{dir}{Guid.NewGuid()}";
+                        } while (File.Exists(fileName));
+
+                        client.DownloadFile(item.File, fileName);
+
+                        var importer = new ImportExportHelper();
+                        result = await importer.Import(fileName, item.Id);
+                    }
+                    catch (Exception)
+                    {
+                        NotificationsHelper.Error($"خطا در دانلود یا ثبت {item.Title}", "خطا");
+                        return null;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public static async Task<CommunicationResult> Login(string username, string password)
+        {
+            var result = new CommunicationResult()
+            {
+                Type = LoginResultType.NotStarted
+            };
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var data = new[]
+                    {
+                        new KeyValuePair<string, string>("username", username),
+                        new KeyValuePair<string, string>("password", password)
+                    };
+
+                    using (var content = new FormUrlEncodedContent(data))
+                    {
+                        var response = await client.PostAsync(StaticValues.LoginUrl, content);
+
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            if (response.StatusCode == HttpStatusCode.Unauthorized)
+                            {
+                                result.Type = LoginResultType.Failed;
+                            }
+                            else
+                            {
+                                result.Type = LoginResultType.CommunicationProblem;
+                            }
+                        }
+                        else
+                        {
+                            result.Type = LoginResultType.Success;
+                            result.Response = await response.Content.ReadAsStringAsync();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Type = LoginResultType.CommunicationProblem;
+                result.Message = ex.Message;
+            }
+
+            return result;
+        }
+
+        public static async Task<CommunicationResult> StudentLogin(string username, string password)
+        {
+            var result = new CommunicationResult()
+            {
+                Type = LoginResultType.NotStarted
+            };
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var data = new[]
+                    {
+                        new KeyValuePair<string, string>("username", username),
+                        new KeyValuePair<string, string>("password", password)
+                    };
+
+                    using (var content = new FormUrlEncodedContent(data))
+                    {
+                        var response = await client.PostAsync(StaticValues.StudentLoginUrl, content);
+
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            if (response.StatusCode == HttpStatusCode.Unauthorized)
+                            {
+                                result.Type = LoginResultType.Failed;
+                            }
+                            else
+                            {
+                                result.Type = LoginResultType.CommunicationProblem;
+                            }
+                        }
+                        else
+                        {
+                            result.Type = LoginResultType.Success;
+                            result.Response = await response.Content.ReadAsStringAsync();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Type = LoginResultType.CommunicationProblem;
+                result.Message = ex.Message;
+            }
+
+            return result;
+        }
+
+        public static async Task<List<Student>> GetStudents(TestItem testItem)
+        {
+            var result = new List<Student>();
+
+            using (var server = new ServerClient())
+            {
+                var formData = new[]
+                    {
+                        new KeyValuePair<string, string>("key", testItem.Key)
+                    };
+
+                using (var content = new FormUrlEncodedContent(formData))
+                {
+                    var response = await server.HttpClient.PostAsync(StaticValues.GetStudentsUrl, content);
+
+                    var data = await response.Content.ReadAsStringAsync();
+                    if (!string.IsNullOrEmpty(data))
+                    {
+                        result = JsonConvert.DeserializeObject<List<Student>>(data);
+                    }
+                }
+
+            }
 
             return result;
         }
 
         public static async Task<List<TestItem>> GetNewTestItems()
         {
+            return await GetNewTestItemsFromServer();
+        }
+
+        public static async Task<bool> StartTest(TestItem testItem, Student student)
+        {
+            try
+            {
+                using (var server = new ServerClient())
+                {
+                    var formData = new[]
+                        {
+                            new KeyValuePair<string, string>("key", testItem.Key),
+                            new KeyValuePair<string, string>("token", student.Token),
+                            new KeyValuePair<string, string>("member", student.IdInServer)
+                        };
+
+                    using (var content = new FormUrlEncodedContent(formData))
+                    {
+                        var response = await server.HttpClient.PostAsync(StaticValues.SetTestStartedUrl, content);
+
+                        response.EnsureSuccessStatusCode();
+
+                        var data = await response.Content.ReadAsStringAsync();
+                        if (data != "ok")
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public static async Task<bool> SyncTest(TestMark testMark)
+        {
+            using (var server = new ServerClient())
+            {
+                var formData = new[]
+                    {
+                        new KeyValuePair<string, string>("key", testMark.TestItem.Key),
+                        new KeyValuePair<string, string>("token", testMark.Student.Token),
+                        new KeyValuePair<string, string>("member", testMark.Student.IdInServer),
+                        new KeyValuePair<string, string>("score", testMark.Score.ToString()),
+                        new KeyValuePair<string, string>("finished", GlobalTools.GetIranTimeZoneNow().ToString())
+                    };
+
+                using (var content = new FormUrlEncodedContent(formData))
+                {
+                    var response = await server.HttpClient.PostAsync(StaticValues.SyncTestUrl, content);
+
+                    response.EnsureSuccessStatusCode();
+
+                    var data = await response.Content.ReadAsStringAsync();
+                    if (data != "ok")
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+
+        public static async Task<List<TestItem>> GetTestItems()
+        {
             var result = new List<TestItem>();
+
+            var exams = new List<ExamItem>();
+            using (var server = new ServerClient())
+            {
+                var response = await server.HttpClient.PostAsync(StaticValues.GetExamsUrl, null);
+
+                var rawData = await response.Content.ReadAsStringAsync();
+                if (!string.IsNullOrEmpty(rawData))
+                {
+                    exams = JsonConvert.DeserializeObject<List<ExamItem>>(rawData);
+                }
+            }
+
+            if (exams.Count == 0)
+            {
+                return result;
+            }
+
+            var data = new List<KeyValuePair<string, ExamItem>>();
 
             using (var db = new DataService())
             {
-                var latest = db.GetLatestTestItem();
+                using (var client = new WebClient())
+                {
+                    foreach (var item in exams)
+                    {
+                        if (string.IsNullOrEmpty(item.File))
+                        {
+                            continue;
+                        }
 
-                var newOnes = await GetNewTestItemsFromServer(latest);
+                        try
+                        {
+                            string fileName;
+                            var dir = $"{StaticValues.RootPath}\\temp\\";
 
-                result.AddRange(newOnes);
+                            if (!Directory.Exists(dir))
+                            {
+                                Directory.CreateDirectory(dir);
+                            }
 
-                await db.SaveTestItems(newOnes);
+                            do
+                            {
+                                fileName = $"{dir}{Guid.NewGuid()}";
+                            } while (File.Exists(fileName));
+
+                            client.DownloadFile(item.File, fileName);
+
+                            data.Add(new KeyValuePair<string, ExamItem>(fileName, item));
+                        }
+                        catch (Exception)
+                        {
+                            NotificationsHelper.Error($"خطا در دانلود {item.Title}", "خطا دانلود");
+                        }
+                    }
+                }
+            }
+
+            var importer = new ImportExportHelper();
+
+            foreach (var item in data)
+            {
+                var file = item.Key;
+
+                if (!File.Exists(file))
+                {
+                    continue;
+                }
+
+                try
+                {
+                    var testItem = await importer.Import(file, item.Value.Id);
+                    result.Add(testItem);
+                    File.Delete(file);
+                }
+                catch (Exception ex)
+                {
+                    NotificationsHelper.Error($"خطا در ثبت '{Path.GetFileName(file)}'", $"خطا {ex.HResult}");
+                }
             }
 
             return result;
         }
 
-        private static async Task<List<TestItem>> GetNewTestItemsFromServer(TestItem latest)
+        private static async Task<List<TestItem>> GetNewTestItemsFromServer()
         {
-            // TODO remove these things!!
-
-
-
             var result = new List<TestItem>();
 
-            result.Add(new TestItem
+            var exams = new List<ExamItem>();
+            using (var server = new ServerClient())
             {
-                Title = "آزمون عملی Excel 2019",
-                DepartmentName = "ICT",
-                GroupName = "ICDL/MOS",
-                CourseName = "ICDL",
-                TestLevel = TestLevel.Level3,
-                HasNegativeScore = false,
-                TotalQuestionsCount = 25,
-                SyllabusRef = "4.1.1.2",
-                TimeAllowedInMin = 60,
-                IsActive = true,
-                Software = "Microsoft Office 2019",
-                AddDateTime = DateTime.Now,
-                DateTime = new DateTime(2020, 1, 5),
-                MaxScore = 20,
-                MinScore = 0,
-                PassScore = 12,
-                ShortDescription = "آزمون عملی نرم افزار Excel برای دریافت پایان نامه مجموعه Office",
-                SoftwareVersion = "2019",
-                Key = "asd4565465asdas",
-                CoverImageAddress = "\\Files\\Images\\t1.jpg",
-                TestsDoneCounter = 25,
-                Questions = new List<TestItemQuestion>
+                var response = await server.HttpClient.PostAsync(StaticValues.GetExamsUrl, null);
+
+                var rawData = await response.Content.ReadAsStringAsync();
+                if (!string.IsNullOrEmpty(rawData))
                 {
-                    new TestItemQuestion
+                    exams = JsonConvert.DeserializeObject<List<ExamItem>>(rawData);
+                }
+            }
+
+            if (exams.Count == 0)
+            {
+                return result;
+            }
+
+            var data = new List<KeyValuePair<string, ExamItem>>();
+
+            using (var db = new DataService())
+            {
+                using (var client = new WebClient())
+                {
+                    foreach (var item in exams)
                     {
-                        Order = 1,
-                        Question = "دو فایل Excel را همزمان باز کنید و به شکل افقی در کنار یکدیگر نمایش دهید.",
-                        Hint = "از هر روشی که مایل باشید می توانید استفاده کنید.",
-                        Score = .5,
-                        Level = TestQuestionLevel.Level1,
-                        TextAnswer = "بر روی آیکن نرم افزار دو بار دابل کلیک کرده و دو فایل را باز کنید سپس از زبانه View گروه Window گزینه Arrange All را انتخاب کنید و از پنجره باز شده Horizontal را انتخاب کرده Ok را کلیک کنید."
-                    },
-                    new TestItemQuestion
-                    {
-                        Order = 2,
-                        Question = "در فایل Book1 و Sheet1 دو محدوده همجوار C1:H11 و K12:P19 را به طور همزمان انتخاب کرده و فقط فرمت این محدوده ها را پاک کنید.",
-                        Hint = "از هر روشی که مایل باشید می توانید استفاده کنید.",
-                        Score = 1,
-                        Level = TestQuestionLevel.Level2,
-                        TextAnswer = "در Name Box آدرس محدوده­ها را به شکل K12:P19 C1:H11, تایپ کرده کلید Enter را فشار دهید سپس از زبانه Home گروه Editing گزینه Clear و سپس Clear Format را انتخاب کنید."
-                    },
-                    new TestItemQuestion
-                    {
-                        Order = 3,
-                        Question = "در فایل Book8 و Sheet1 با استفاده ار تابع در سلول B2 سلول A2 را تا دو رقم اعشار گرد کنید و فرمول را تا سلول B8 تعمیم دهید.",
-                        Score = 1,
-                        Level = TestQuestionLevel.Level3,
-                        TextAnswer = "در سلول B2 مساوی را تایپ کنید و تابع Round(A2,2) را تایپ کنید و سپس سلول را تا B8 با Autofill تعمیم دهید."
-                    },
-                    new TestItemQuestion
-                    {
-                        Order = 4,
-                        Question = "در فایل Book8 و Sheet1 با استفاده ار تابع در سلول B2 سلول A2 را تا دو رقم اعشار گرد کنید و فرمول را تا سلول B8 تعمیم دهید.",
-                        Score = 1,
-                        Level = TestQuestionLevel.Level3,
-                        TextAnswer = "در سلول B2 مساوی را تایپ کنید و تابع Round(A2,2) را تایپ کنید و سپس سلول را تا B8 با Autofill تعمیم دهید."
-                    },
-                    new TestItemQuestion
-                    {
-                        Order = 5,
-                        Question = "در فایل Book8 و Sheet1 با استفاده ار تابع در سلول B2 سلول A2 را تا دو رقم اعشار گرد کنید و فرمول را تا سلول B8 تعمیم دهید.",
-                        Score = 1,
-                        Level = TestQuestionLevel.Level3,
-                        TextAnswer = "در سلول B2 مساوی را تایپ کنید و تابع Round(A2,2) را تایپ کنید و سپس سلول را تا B8 با Autofill تعمیم دهید."
-                    },
-                    new TestItemQuestion
-                    {
-                        Order = 6,
-                        Question = "در فایل Book8 و Sheet1 با استفاده ار تابع در سلول B2 سلول A2 را تا دو رقم اعشار گرد کنید و فرمول را تا سلول B8 تعمیم دهید.",
-                        Score = 1,
-                        Level = TestQuestionLevel.Level3,
-                        TextAnswer = "در سلول B2 مساوی را تایپ کنید و تابع Round(A2,2) را تایپ کنید و سپس سلول را تا B8 با Autofill تعمیم دهید."
-                    },
-                    new TestItemQuestion
-                    {
-                        Order = 7,
-                        Question = "در فایل Book8 و Sheet1 با استفاده ار تابع در سلول B2 سلول A2 را تا دو رقم اعشار گرد کنید و فرمول را تا سلول B8 تعمیم دهید.",
-                        Score = 1,
-                        Level = TestQuestionLevel.Level3,
-                        TextAnswer = "در سلول B2 مساوی را تایپ کنید و تابع Round(A2,2) را تایپ کنید و سپس سلول را تا B8 با Autofill تعمیم دهید."
+                        if (string.IsNullOrEmpty(item.File))
+                        {
+                            continue;
+                        }
+
+                        if (db.TestIsThere(item.Id))
+                        {
+                            continue;
+                        }
+
+                        try
+                        {
+                            string fileName;
+                            var dir = $"{StaticValues.RootPath}\\temp\\";
+
+                            if (!Directory.Exists(dir))
+                            {
+                                Directory.CreateDirectory(dir);
+                            }
+
+                            do
+                            {
+                                fileName = $"{dir}{Guid.NewGuid()}";
+                            } while (File.Exists(fileName));
+
+                            client.DownloadFile(item.File, fileName);
+
+                            data.Add(new KeyValuePair<string, ExamItem>(fileName, item));
+                        }
+                        catch (Exception)
+                        {
+                            NotificationsHelper.Error($"خطا در دانلود {item.Title}", "خطا دانلود");
+                        }
                     }
                 }
-            });
+            }
 
-            var refTest = result.First();
-            var d = new TestItem
-            {
-                AddDateTime = refTest.AddDateTime,
-                CourseId = refTest.CourseId,
-                GroupName = refTest.GroupName,
-                DateTime = refTest.DateTime,
-                DepartmentId = refTest.DepartmentId,
-                GroupId = refTest.GroupId,
-                DepartmentName = refTest.GroupName,
-                HasNegativeScore = refTest.HasNegativeScore,
-                IsActive = refTest.IsActive,
-                IsPinned = refTest.IsPinned,
-                MaxScore = 100,
-                MinScore = 0,
-                PassScore = 60,
-                Requirement = refTest.Requirement,
-                SyllabusRef = refTest.SyllabusRef,
-                Version = refTest.Version,
-                Title = "اصول فتوشاپ",
-                CoverImageAddress = refTest.CoverImageAddress.Replace("t1", "t2"),
-                Software = "Photoshop",
-                SoftwareVersion = "2019",
-                ShortDescription = "آزمون مقدماتی و اصول فتوشاپ",
-                TestLevel = TestLevel.Level1,
-                TimeAllowedInMin = 30,
-                TotalQuestionsCount = 10,
-                CourseName = "گرافیک",
-                Key = "dvsdd4565465asdas",
-                TestsDoneCounter = 15
-            };
-            result.Add(d);
+            var importer = new ImportExportHelper();
 
-            var d2 = new TestItem
+            foreach (var item in data)
             {
-                AddDateTime = refTest.AddDateTime,
-                CourseId = refTest.CourseId,
-                DepartmentName = refTest.DepartmentName,
-                DateTime = refTest.DateTime,
-                DepartmentId = refTest.DepartmentId,
-                GroupId = refTest.GroupId,
-                GroupName = refTest.GroupName,
-                HasNegativeScore = refTest.HasNegativeScore,
-                IsActive = refTest.IsActive,
-                IsPinned = refTest.IsPinned,
-                MaxScore = 100,
-                MinScore = 0,
-                PassScore = 60,
-                Requirement = refTest.Requirement,
-                SyllabusRef = refTest.SyllabusRef,
-                Version = refTest.Version,
-                Title = "Word",
-                CoverImageAddress = refTest.CoverImageAddress.Replace("t1", "t3"),
-                Software = "Microsoft Office",
-                SoftwareVersion = "2019",
-                ShortDescription = "آزمون مرحله نهایی MS Word با انجام این آزمون شما موفق به دریافت گواهینامه انجام امور اقتصادی خواهید شد پس حتما تلاش خود را بکنید!",
-                TestLevel = TestLevel.Level4,
-                TimeAllowedInMin = 90,
-                TotalQuestionsCount = 30,
-                CourseName = "ICDL",
-                TestsDoneCounter = 4,
-                Key = "dvsdd45bbbasdas"
-            };
-            result.Add(d2);
+                var file = item.Key;
 
-            var d3 = new TestItem
-            {
-                AddDateTime = refTest.AddDateTime,
-                CourseId = refTest.CourseId,
-                DepartmentName = refTest.DepartmentName,
-                DateTime = refTest.DateTime,
-                DepartmentId = refTest.DepartmentId,
-                GroupId = refTest.GroupId,
-                GroupName = refTest.GroupName,
-                HasNegativeScore = refTest.HasNegativeScore,
-                IsActive = refTest.IsActive,
-                IsPinned = refTest.IsPinned,
-                MaxScore = 100,
-                MinScore = 0,
-                PassScore = 60,
-                Requirement = refTest.Requirement,
-                SyllabusRef = refTest.SyllabusRef,
-                Version = refTest.Version,
-                Title = " آزمون تستی با نام بسیار بسیار بسیار بسیار طولانی",
-                CoverImageAddress = refTest.CoverImageAddress.Replace("t1", "t5"),
-                Software = "Microsoft Office",
-                SoftwareVersion = "2019",
-                ShortDescription = "آزمون مرحله نهایی MS Word با انجام این آزمون شما موفق به دریافت گواهینامه انجام امور اقتصادی خواهید شد پس حتما تلاش خود را بکنید!",
-                TestLevel = TestLevel.Level4,
-                TimeAllowedInMin = 90,
-                TotalQuestionsCount = 30,
-                CourseName = "ICDL",
-                Key = "xxsdd4565465asdas"
-            };
-            result.Add(d3);
+                if (!File.Exists(file))
+                {
+                    continue;
+                }
+
+                try
+                {
+                    var testItem = await importer.Import(file, item.Value.Id);
+                    result.Add(testItem);
+                    File.Delete(file);
+                }
+                catch (Exception ex)
+                {
+                    NotificationsHelper.Error($"خطا در ثبت '{Path.GetFileName(file)}'", $"خطا {ex.HResult}");
+                }
+            }
 
             return result;
         }

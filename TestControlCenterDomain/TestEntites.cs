@@ -134,7 +134,7 @@ namespace TestControlCenterDomain
         public bool IsForFinalAnswer { get; set; } = false;
     }
 
-    public class MftStudent
+    public class Student
     {
         public int Id { get; set; }
 
@@ -199,7 +199,7 @@ namespace TestControlCenterDomain
     {
         public int Id { get; set; }
 
-        public MftStudent MftStudent { get; set; }
+        public Student Student { get; set; }
 
         public TestItem TestItem { get; set; }
 
@@ -213,12 +213,23 @@ namespace TestControlCenterDomain
 
         public DateTime FinishDateTime { get; set; }
 
-        public DateTime? SycncDateTime { get; set; }
+        public DateTime? SyncDateTime { get; set; }
+
+        public DateTime? FinilizeDateTime { get; set; }
 
         public bool IsFinal { get; set; } = false;
 
         public double? Score { get; set; }
 
         public ICollection<TestMarkAnswer> TestMarkAnswers { get; set; }
+    }
+
+    public class ImageSearchResultItem
+    {
+        public int X { get; set; }
+
+        public int Y { get; set; }
+
+        public double Tolerance { get; set; }
     }
 }

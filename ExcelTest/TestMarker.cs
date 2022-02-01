@@ -23,21 +23,15 @@ namespace ExcelTest
             this.imagesDir = imagesDir;
         }
 
-        private (int result, List<Rectangle> locations) CheckImages(string clueImage, string answerImage, double tolerance)
+        private (int result, List<ImageSearchResultItem> locations) CheckImages(string clueImage, string answerImage, double tolerance)
         {
-            using (var smallerImage = new Bitmap($"{imagesDir}{clueImage}.mftdata"))
+            var results = processorAdvanced.SearchImage($"{imagesDir}{clueImage}.retadata", answerImage, tolerance);
+            if (results.Any(x => x.Tolerance > tolerance))
             {
-                using (var biggerImage = new Bitmap(answerImage))
-                {
-                    var results = processor.SearchBitmap(smallerImage, biggerImage, tolerance);
-                    if (results == null || results.Count == 0)
-                    {
-                        return (0, results);
-                    }
-
-                    return (1, results);
-                }
+                return (1, results);
             }
+
+            return (0, results);
         }
 
         private MarkQuestionResult MarkQuestion(TestMarkAnswer answer, double tolerance)
@@ -56,30 +50,37 @@ namespace ExcelTest
 
                     if(results?.Count > 0)
                     {
-                        var up = results.OrderBy(x => x.Top).First();
-                        var down = results.OrderByDescending(x => x.Top).First();
-                        if (up.Top + 150 > down.Top)
+                        var up = results.OrderBy(x => x.Y).First();
+                        if (!results.Any(x => x.Y > up.Y + 150))
                         {
                             answer.PublicScore = 0;
                         }
                     }
-                    //CluesMarking(answer, tolerance, result);
-                    //if (answer.PrivateScore != 100)
-                    //{
-                    //    answer.PublicScore = 0;
-                    //}
+                    if(answer.Records?.Any(x => x.Data == "true") == false)
+                    {
+                        CluesMarking(answer, tolerance * .75, result);
+                        if (answer.PrivateScore != 100)
+                        {
+                            answer.PublicScore = 0;
+                        }
+                    }
                     break;
                 case 2:
-                    //CluesMarking(answer, tolerance, result);
+                    CluesMarking(answer, tolerance, result);
 
-                    if(File.Exists($"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\Book1.pdf"))
+                    if (answer.Records?.Any(x => x.Data == "true") == true)
                     {
                         answer.PublicScore = answer.TestItemQuestion.Score;
+                    }
+
+                    if(answer.PrivateScore != 100)
+                    {
+                        answer.PublicScore = 0;
                     }
                     break;
                 case 3:
                     AnswerMarking(answer, tolerance, result);
-                    //CluesMarking(answer, tolerance, result);
+                    CluesMarking(answer, tolerance, result);
                     break;
                 case 4:
                     AnswerMarking(answer, tolerance, result);
@@ -89,16 +90,16 @@ namespace ExcelTest
                     break;
                 case 6:
                     AnswerMarking(answer, tolerance, result);
-                    //CluesMarking(answer, tolerance, result);
+                    CluesMarking(answer, tolerance, result);
 
-                    if(answer.PrivateScore != 100)
+                    if (answer.PrivateScore != 100)
                     {
                         answer.PublicScore = 0;
                     }
                     break;
                 case 7:
                     AnswerMarking(answer, tolerance, result);
-                    //CluesMarking(answer, tolerance, result);
+                    CluesMarking(answer, tolerance, result);
 
                     break;
             }
@@ -106,9 +107,9 @@ namespace ExcelTest
             return result;
         }
 
-        private List<Rectangle> AnswerMarking(TestMarkAnswer answer, double tolerance, MarkQuestionResult result)
+        private List<ImageSearchResultItem> AnswerMarking(TestMarkAnswer answer, double tolerance, MarkQuestionResult result)
         {
-            var locations = new List<Rectangle>();
+            var locations = new List<ImageSearchResultItem>();
 
             var finalAnswer = answer.Records.Where(x => x.RecordType == TestItemQuestionClueRecordType.Answer).OrderByDescending(x => x.Id).FirstOrDefault();
             if (finalAnswer != null)
@@ -137,9 +138,9 @@ namespace ExcelTest
             return locations;
         }
 
-        private List<Rectangle> CluesMarking(TestMarkAnswer answer, double tolerance, MarkQuestionResult result)
+        private List<ImageSearchResultItem> CluesMarking(TestMarkAnswer answer, double tolerance, MarkQuestionResult result)
         {
-            var locations = new List<Rectangle>();
+            var locations = new List<ImageSearchResultItem>();
 
             var otherClues = answer.TestItemQuestion.Clues.Where(x => !x.IsForFinalAnswer).GroupBy(x => x.Order);
             var otherAnswers = answer.Records.Where(x => x.RecordType != TestItemQuestionClueRecordType.Answer);
@@ -246,8 +247,17 @@ namespace ExcelTest
                         return "-1";
                     }
                     var windows = EnumerateProcessWindowHandles(wanted.Id);
-                    return windows.Count() == 14 ? "true" : "false";
 
+                    return windows.Count() >= 14 ? "true" : "false";
+
+                case 2:
+                    var filePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\Book1.pdf";
+                    if (!File.Exists(filePath))
+                    {
+                        return "false";
+                    }
+                    var lastSaved = File.GetLastWriteTime(filePath);
+                    return (DateTime.Now - lastSaved).TotalMinutes < 5 ? "true" : "false";
                 default:
                     return null;
             }

@@ -67,7 +67,7 @@ namespace TestControlCenter.Models
 
         public int Columns
         {
-            get { return columns; }
+            get => columns;
             set
             {
                 columns = value;
@@ -78,7 +78,7 @@ namespace TestControlCenter.Models
         private TestsSortOrder sortOrder;
         public TestsSortOrder SortOrder
         {
-            get { return sortOrder; }
+            get => sortOrder;
             set
             {
                 sortOrder = value;
@@ -99,7 +99,7 @@ namespace TestControlCenter.Models
         private string filter;
         public string Filter
         {
-            get { return filter; }
+            get => filter;
             set
             {
                 filter = value;
@@ -119,7 +119,7 @@ namespace TestControlCenter.Models
 
         public int LoadingDataCounter
         {
-            get { return loadingDataCounter; }
+            get => loadingDataCounter;
             set
             {
                 loadingDataCounter = value;
@@ -210,6 +210,22 @@ namespace TestControlCenter.Models
             //}
         }
 
+        public async Task GetTestItems()
+        {
+            await RunAndRaiseCommunicationEvents<Task>(this, null, async () =>
+            {
+                var task = CommunicationService.GetTestItems();
+                await task;
+
+                using (var db = new DataService())
+                {
+                    var data = await db.GetTestsAsync(Filter, SortOrder);
+                    UpdateTestsCollection(data);
+                }
+                return task;
+            });
+        }
+
         public void SetColumnsCount(Size size)
         {
             Columns = (int)size.Width / 250;
@@ -220,11 +236,38 @@ namespace TestControlCenter.Models
             Filter = filter;
         }
 
-        public async Task<List<MftStudent>> GetStudents(TestItem testItem)
+        public async Task<List<Student>> GetStudents(TestItem testItem)
         {
             return await RunAndRaiseCommunicationEvents(this, null, async () =>
             {
                 return await CommunicationService.GetStudents(testItem);
+            });
+        }
+
+        public async Task SyncTestItems()
+        {
+            await RunAndRaiseCommunicationEvents(this, null, async () =>
+            {
+                using (var db = new DataService())
+                {
+                    var data = await db.GetUnSyncedTestMarksAsync();
+
+                    var task = Task.Run(async () =>
+                    {
+                        foreach (var item in data)
+                        {
+                            await CommunicationService.SyncTest(item);
+
+                            item.IsSynced = true;
+                            item.SyncDateTime = DateTime.Now;
+
+                            await db.UpdateExam(item);
+                        }
+                    });
+
+                    await task;
+                    return task;
+                }
             });
         }
     }
@@ -287,7 +330,7 @@ namespace TestControlCenter.Models
         private bool isLoadingStudents = false;
         public bool IsLoadingStudents
         {
-            get { return isLoadingStudents; }
+            get => isLoadingStudents;
             set
             {
                 isLoadingStudents = value;

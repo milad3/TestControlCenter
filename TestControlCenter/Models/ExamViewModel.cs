@@ -21,12 +21,45 @@ namespace TestControlCenter.Models
         private bool? isSelected;
         public bool? IsSelected
         {
-            get { return isSelected; }
+            get => isSelected;
             set
             {
                 isSelected = value;
                 OnPropertyChanged(nameof(IsSelected));
             }
+        }
+
+        private bool isAnswered = false;
+        public bool IsAnswered
+        {
+            get => isAnswered;
+            set
+            {
+                isAnswered = value;
+                OnPropertyChanged(nameof(IsAnswered));
+                OnPropertyChanged(nameof(IsNotAnswered));
+            }
+        }
+
+        public bool IsNotAnswered
+        {
+            get => !IsAnswered;
+        }
+
+        private bool bookmarked;
+        public bool Bookmarked
+        {
+            get => bookmarked;
+            set
+            {
+                bookmarked = value;
+                OnPropertyChanged(nameof(Bookmarked));
+            }
+        }
+
+        public bool NotBookmarked
+        {
+            get => !Bookmarked;
         }
     }
 
@@ -155,7 +188,7 @@ namespace TestControlCenter.Models
         private int height;
         public int Height
         {
-            get { return height; }
+            get => height;
             set
             {
                 height = value;
@@ -166,7 +199,7 @@ namespace TestControlCenter.Models
         private int minWidth;
         public int MinWidth
         {
-            get { return minWidth; }
+            get => minWidth;
             set
             {
                 minWidth = value;
@@ -177,7 +210,7 @@ namespace TestControlCenter.Models
         private int minHeight;
         public int MinHeight
         {
-            get { return minHeight; }
+            get => minHeight;
             set
             {
                 minHeight = value;
@@ -188,7 +221,7 @@ namespace TestControlCenter.Models
         private int width;
         public int Width
         {
-            get { return width; }
+            get => width;
             set
             {
                 width = value;
@@ -199,7 +232,7 @@ namespace TestControlCenter.Models
         private double left;
         public double Left
         {
-            get { return left; }
+            get => left;
             set
             {
                 left = value;
@@ -210,7 +243,7 @@ namespace TestControlCenter.Models
         private double top;
         public double Top
         {
-            get { return top; }
+            get => top;
             set
             {
                 top = value;
@@ -227,7 +260,7 @@ namespace TestControlCenter.Models
         private bool topMost;
         public bool TopMost
         {
-            get { return topMost; }
+            get => topMost;
             set
             {
                 topMost = value;
@@ -238,7 +271,7 @@ namespace TestControlCenter.Models
         private TestItemQuestionViewModel selectedQuestion;
         public TestItemQuestionViewModel SelectedQuestion
         {
-            get { return selectedQuestion; }
+            get => selectedQuestion;
             set
             {
                 selectedQuestion = value;
@@ -253,7 +286,7 @@ namespace TestControlCenter.Models
         private TestItem testItem;
         public TestItem TestItem
         {
-            get { return testItem; }
+            get => testItem;
             set
             {
                 testItem = value;
@@ -262,13 +295,13 @@ namespace TestControlCenter.Models
             }
         }
 
-        public MftStudent Student { get; set; }
+        public Student Student { get; set; }
 
         private string remainingTime;
 
         public string RemainingTime
         {
-            get { return remainingTime; }
+            get => remainingTime;
             set
             {
                 remainingTime = value;
@@ -279,7 +312,7 @@ namespace TestControlCenter.Models
         private string filter;
         public string Filter
         {
-            get { return filter; }
+            get => filter;
             set
             {
                 filter = value;

@@ -12,8 +12,8 @@ namespace GeneralTests
         [TestMethod]
         public void SearchImageInsideImage()
         {
-            var source = @"C:\Users\Milad\Desktop\tests\1\s1.jpg";
-            var wanted = @"C:\Users\Milad\Desktop\tests\1\c3.jpg";
+            var source = @"C:\Users\Milad\Desktop\tests\3\s1.jpg";
+            var wanted = @"C:\Users\Milad\Desktop\tests\3\c1.jpg";
 
             //var image = new Image<Gray, byte>(source);
             //var innerImage = new Image<Gray, byte>(wanted);

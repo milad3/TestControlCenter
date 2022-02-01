@@ -90,11 +90,12 @@
                     </Border.OpacityMask>
                     <StackPanel>
                         <TextBox Margin="15" materialDesign:HintAssist.Hint="جستجو" Padding="5,2" materialDesign:TextFieldAssist.HasClearButton="True" Text="{Binding Path=Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGrid Height="275" SelectionUnit="FullRow" ItemsSource="{Binding Students}" HeadersVisibility="All" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" SelectionChanged="DataGrid_SelectionChanged">
+                        <DataGrid Height="360" SelectionUnit="FullRow" ItemsSource="{Binding Students}" HeadersVisibility="All" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" SelectionChanged="DataGrid_SelectionChanged">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="نام و نام خانوادگی" Binding="{Binding Name}" />
                                 <DataGridTextColumn Header="کدملی" Width="110" TextBlock.FontSize="11" Foreground="Gray" Binding="{Binding NationalCode}" />
-                                <DataGridTextColumn Header="موبایل" Width="110" TextBlock.FontSize="11" Foreground="Gray" Binding="{Binding Mobile}">
+                                <DataGridTextColumn Header="توکن" Width="110" TextBlock.FontSize="11" Foreground="Gray" Binding="{Binding Token}" />
+                                <DataGridTextColumn Header="موبایل" TextBlock.FontSize="11" Foreground="Gray" Binding="{Binding Mobile}">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="FlowDirection" Value="LeftToRight" />
@@ -105,7 +106,7 @@
                         </DataGrid>
                     </StackPanel>
                 </Border>
-                <StackPanel Grid.Row="2" Margin="5">
+                <!--<StackPanel Grid.Row="2" Margin="5">
                     <StackPanel Margin="0,0,0,10" HorizontalAlignment="Center">
                         <WrapPanel>
                             <TextBlock Foreground="Gray">آزمون دهنده:</TextBlock>
@@ -124,7 +125,7 @@
                             <materialDesign:PackIcon Grid.Column="1" Kind="TitleBackward" Width="20" HorizontalContentAlignment="Right" HorizontalAlignment="Left" Height="20" Margin="0,1.5,0,0"/>
                         </Grid>
                     </Button>
-                </StackPanel>
+                </StackPanel>-->
             </Grid>
             <Grid x:Name="PhaseTwoGrid" Visibility="Hidden">
                 <Grid.Style>
@@ -156,7 +157,7 @@
                 <Button materialDesign:ShadowAssist.ShadowDepth="Depth0" Background="{x:Null}" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5" BorderBrush="Red" Click="CloseButton_Click" Panel.ZIndex="1">
                     <materialDesign:PackIcon Foreground="Red" Kind="Close" Width="24" Height="24"></materialDesign:PackIcon>
                 </Button>
-                <StackPanel Margin="15" MouseMove="MoveWindowPart_MouseMove">
+                <StackPanel Margin="25,25,25,0" MouseMove="MoveWindowPart_MouseMove">
                     <StackPanel.Resources>
                         <Style TargetType="TextBlock">
                             <Setter Property="Margin" Value="0,10,0,0"/>
@@ -195,13 +196,13 @@
                         <TextBlock Margin="5,10,0,0" Text="{Binding TestItem.MaxScore}" />
                         <TextBlock Margin="5,10,0,0" Text="نمره" />
                     </WrapPanel>
-                    <TextBlock Text="توجه داشته باشید هنگام ' ثبت پاسخ ' حتما اطلاعات مورد نیاز تصحیح، روی مانیتور وجود داشته باشد." />
+                    <TextBlock TextWrapping="Wrap" Text="توجه داشته باشید هنگام ' ثبت پاسخ ' حتما اطلاعات مورد نیاز تصحیح، روی مانیتور وجود داشته باشد و در صورت نیاز فایل مربوطه ذخیره شده باشد." />
                     <TextBlock Text="شروع آزمون توسط آزمون دهنده انجام شود." />
                     <TextBlock Foreground="Red" Text="آزمون نمره منفی دارد." Visibility="{Binding Path=TestItem.HasNegativeScore, Converter={StaticResource BoolToVis}}" />
                     <TextBlock Foreground="PaleVioletRed" Text="زمان آزمون قابل افزایش نیست." />
-                    <TextBlock Text="تمامی پاسخ ها باید حتما ثبت شده باشند اگرچه امکان تغییر پاسخ های از قبل ثبت شده وجود دارد."/>
+                    <TextBlock TextWrapping="Wrap" Text="تمامی پاسخ ها باید حتما ثبت شده باشند اگرچه امکان تغییر پاسخ های از قبل ثبت شده وجود دارد."/>
                 </StackPanel>
-                <Button HorizontalContentAlignment="Stretch" Click="StartButton_Click" Grid.Row="2" Background="Gold" Style="{StaticResource MaterialDesignRaisedLightButton}" Margin="10">
+                <Button x:Name="StartButton" HorizontalContentAlignment="Stretch" Click="StartButton_Click" Grid.Row="2" Background="Gold" Style="{StaticResource MaterialDesignRaisedLightButton}" Margin="10">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100*"></ColumnDefinition>

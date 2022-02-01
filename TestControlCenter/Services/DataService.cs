@@ -1,7 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using TestControlCenter.Data;
 using TestControlCenterDomain;
@@ -9,6 +7,9 @@ using TestControlCenter.Models;
 using System.IO;
 using TestControlCenter.Tools;
 using TestControlCenter.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace TestControlCenter.Services
 {
@@ -37,10 +38,10 @@ namespace TestControlCenter.Services
 
         public async Task<TestMarkingViewModel> GetTestMarkAsync(TestMark testMark)
         {
-            var wanted = await Database.TestMarks.Include(x => x.MftStudent).Include(x => x.TestItem).Include(x => x.TestItem.Questions).Include("TestMarkAnswers.TestItemQuestion.Clues").Include("TestMarkAnswers.Records").FirstAsync(x => x.Id == testMark.Id);
-            var model = new TestMarkingViewModel(wanted)
+            var wanted = await Database.TestMarks.Include(x => x.Student).Include(x => x.TestItem).Include(x => x.TestItem.Questions).Include("TestMarkAnswers.TestItemQuestion.Clues").Include("TestMarkAnswers.Records").FirstAsync(x => x.Id == testMark.Id);
+            var model = new TestMarkingViewModel(wanted, new MessageLogger())
             {
-                Answers = new System.Collections.ObjectModel.ObservableCollection<TestMarkAnswer>()
+                Answers = new ObservableCollection<TestMarkAnswer>()
             };
             foreach (var item in model.TestMark.TestMarkAnswers.OrderBy(x => x.TestItemQuestion.Order))
             {
@@ -48,6 +49,11 @@ namespace TestControlCenter.Services
             }
 
             return model;
+        }
+
+        public TestItem GetTestItem(string key)
+        {
+            return Database.TestItems.Include(x => x.Questions).FirstOrDefault(x => x.Key == key);
         }
 
         public async Task<List<TestMark>> SearchTestMarks(bool showFinilized, bool showUnmarked, bool showMarked, string filter, TestsListSortOrder sortOrder)
@@ -58,14 +64,15 @@ namespace TestControlCenter.Services
 
             if (string.IsNullOrEmpty(filter))
             {
-                query = Database.TestMarks.Take(max).OrderByDescending(x => x.Id);
+                query = Database.TestMarks.AsQueryable().Take(max)
+                                          .OrderByDescending(x => x.Id);
             }
             else
             {
                 var filterInLower = filter.ToLower();
-                query = Database.TestMarks.Where(
+                query = Database.TestMarks.AsQueryable().Where(
                 x =>
-                x.MftStudent.Name.ToLower().Contains(filterInLower)
+                x.Student.Name.ToLower().Contains(filterInLower)
                 || x.TestItem.Title.Contains(filter)
                 || x.TestItem.Software.ToLower().Contains(filterInLower)
                 || x.TestItem.TagsCommaSeperated.ToLower().Contains(filterInLower)).Take(max).OrderByDescending(x => x.Id);
@@ -110,7 +117,28 @@ namespace TestControlCenter.Services
                     break;
             }
 
-            return await query.Include(x => x.MftStudent).Include(x => x.TestItem).ToListAsync();
+            return await query.Include(x => x.Student).Include(x => x.TestItem).ToListAsync();
+        }
+
+        public async Task UpdateExam(TestMark testMark)
+        {
+            var wanted = Database.TestMarks.FirstOrDefault(x => x.Id == testMark.Id);
+
+            wanted.Score = testMark.Score;
+
+            wanted.IsFinal = testMark.IsFinal;
+
+            wanted.IsMarked = testMark.IsMarked;
+
+            wanted.TestMarkAnswers = testMark.TestMarkAnswers;
+            
+            if(testMark.IsSynced)
+            {
+                wanted.IsSynced = testMark.IsSynced;
+                wanted.SyncDateTime = DateTime.Now;
+            }
+
+            await Database.SaveChangesAsync();
         }
 
         public async Task<TestItem> GetTestAsync(int id)
@@ -170,14 +198,19 @@ namespace TestControlCenter.Services
 
         public async Task<bool> IsThereUnmarkedTests()
         {
-            return await Database.TestMarks.AnyAsync(x => !x.IsMarked);
+            return await Database.TestMarks.AsQueryable().AnyAsync(x => !x.IsMarked);
+        }
+
+        public async Task<List<TestMark>> GetUnSyncedTestMarksAsync()
+        {
+            return await Database.TestMarks.Include(x => x.TestItem).Include(x => x.Student).AsQueryable().Where(x => !x.IsSynced && x.IsFinal).ToListAsync();
         }
 
         public async Task<TestMark> SaveExam(List<TestItemQuestionClueRecord> records, DateTime startDateTime)
         {
             var testMark = new TestMark
             {
-                MftStudent = GlobalValues.Student,
+                Student = GlobalValues.Student,
                 TestItemId = GlobalValues.Test.Id,
                 TestMarkAnswers = new List<TestMarkAnswer>(),
                 FinishDateTime = DateTime.Now,
@@ -201,7 +234,7 @@ namespace TestControlCenter.Services
                 };
                 foreach (var item in items)
                 {
-                    var newAddress = GlobalTools.GetNewFileName(dir, ".mftdata");
+                    var newAddress = GlobalTools.GetNewFileName(dir, ".retadata");
                     File.Copy(item.ImageAddress, newAddress);
                     forCleanUp.Add(item.ImageAddress);
                     item.ImageAddress = newAddress;
@@ -228,9 +261,14 @@ namespace TestControlCenter.Services
             return testMark;
         }
 
+        public bool TestIsThere(string key)
+        {
+            return Database.TestItems.Any(x => x.Key == key);
+        }
+
         public TestItem GetLatestTestItem()
         {
-            return Database.TestItems.OrderByDescending(x => x.DateTime).FirstOrDefault();
+            return Database.TestItems.AsQueryable().OrderByDescending(x => x.DateTime).FirstOrDefault();
         }
 
         public async Task SaveTestItems(params TestItem[] testItems)
@@ -282,7 +320,7 @@ namespace TestControlCenter.Services
                     wanted.PassScore = item.PassScore;
                     wanted.ProcessorAddress = item.ProcessorAddress;
 
-                    var toBeRemoved = Database.Questions.Where(x => x.TestItemId == wanted.Id);
+                    var toBeRemoved = Database.Questions.AsQueryable().Where(x => x.TestItemId == wanted.Id);
                     Database.Questions.RemoveRange(toBeRemoved);
                     wanted.Questions = item.Questions;                    
 
@@ -310,7 +348,7 @@ namespace TestControlCenter.Services
 
         public async Task TogglePinForTestItemAndSave(TestItem item)
         {
-            var wanted = await Database.TestItems.FirstAsync(x => x.Id == item.Id);
+            var wanted = await Database.TestItems.AsQueryable().FirstAsync(x => x.Id == item.Id);
             wanted.IsPinned = !wanted.IsPinned;
 
             await Database.SaveChangesAsync();

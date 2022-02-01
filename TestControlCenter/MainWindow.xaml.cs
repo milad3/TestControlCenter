@@ -17,6 +17,7 @@ using TestControlCenter.Tools;
 using TestControlCenter.Windows;
 using Microsoft.Win32;
 using System.IO;
+using TestControlCenter.Infrastructure;
 
 namespace TestControlCenter
 {
@@ -45,39 +46,36 @@ namespace TestControlCenter
             {
                 AppCleaner.CleanUp();
             }, null, 0, 30 * 1000);
-
-            var loginWindow = new LoginWindow();
-
-            loginWindow.ShowDialog();
-
-            if (!loginWindow.IsLoggedIn)
-            {
-                Application.Current.Shutdown();
-            }
         }
 
         private TimerCallback GetUnmarkedTestsCheckTimerCallback()
         {
             return async (obj) =>
             {
-                using (var db = new DataService())
+                try
                 {
-                    if(await db.IsThereUnmarkedTests())
+                    using (var db = new DataService())
                     {
-                        Dispatcher.Invoke(() =>
+                        if (await db.IsThereUnmarkedTests())
                         {
-                            UnmarkedTestsIcon.Visibility = Visibility.Visible;
-                            UnmarkedButton.Visibility = Visibility.Visible;
-                        });
-                    }
-                    else
-                    {
-                        Dispatcher.Invoke(() =>
+                            Dispatcher.Invoke(() =>
+                            {
+                                UnmarkedTestsIcon.Visibility = Visibility.Visible;
+                                UnmarkedButton.Visibility = Visibility.Visible;
+                            });
+                        }
+                        else
                         {
-                            UnmarkedTestsIcon.Visibility = Visibility.Collapsed;
-                            UnmarkedButton.Visibility = Visibility.Collapsed;
-                        });
+                            Dispatcher.Invoke(() =>
+                            {
+                                UnmarkedTestsIcon.Visibility = Visibility.Collapsed;
+                                UnmarkedButton.Visibility = Visibility.Collapsed;
+                            });
+                        }
                     }
+                }
+                catch (Exception)
+                {
                 }
             };
         }
@@ -139,7 +137,7 @@ namespace TestControlCenter
 
         private void Exit_Button_Click(object sender, RoutedEventArgs e)
         {
-
+            App.LogoutLogin(this);
         }
 
         private void MenuToggleButton_Click(object sender, RoutedEventArgs e)
@@ -170,6 +168,16 @@ namespace TestControlCenter
             btn.IsEnabled = false;
 
             await ViewModel.GetLatestTestItems();
+
+            btn.IsEnabled = true;
+        }
+
+        private async void GetTestItemsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = (Button)sender;
+            btn.IsEnabled = false;
+
+            await ViewModel.GetTestItems();
 
             btn.IsEnabled = true;
         }
@@ -212,6 +220,10 @@ namespace TestControlCenter
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            var data = await CommunicationService.GetInfo();
+            titleTextBlock.Text = data.Response;
+            Title = titleTextBlock.Text;
+
             ViewModel = await ViewModelsHelper.GetMainWindowViewModel();
 
             ViewModel.InternetCommunicationStartEvent += ViewModel_InternetCommunicationStartEvent;
@@ -234,7 +246,7 @@ namespace TestControlCenter
             }
         }
 
-        Task<List<MftStudent>> request;
+        Task<List<Student>> request;
         TestItem requestTestItem;
         private async void Border_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -262,20 +274,26 @@ namespace TestControlCenter
             testItem.IsLoadingStudents = true;
 
             request = ViewModel.GetStudents(testItem);
-            var studens = await request;
-            studens = studens.Select(x =>
+            var students = await request;
+            if(students == null || students.Count == 0)
+            {
+                NotificationsHelper.Warning("توکن استفاده نشده ای برای مرکز شما وجود ندارد.", "اخطار");
+                return;
+            }
+            students = students.Select(x =>
             {
                 if (string.IsNullOrEmpty(x.Mobile) || x.Mobile.Length < 10)
                 {
                     return x;
                 }
 
-                return new MftStudent
+                return new Student
                 {
                     IdInServer = x.IdInServer,
                     Name = x.Name,
                     NationalCode = x.NationalCode,
-                    Mobile = x.Mobile.Remove(4, 3).Insert(4, "***")
+                    Mobile = x.Mobile.Remove(4, 3).Insert(4, "***"),
+                    Token = x.Token
                 };
             }).ToList();
 
@@ -286,7 +304,7 @@ namespace TestControlCenter
             {
                 Owner = this,
                 TestItem = testItem,
-                Students = studens
+                Students = students
             };
 
             window.ShowDialog();
@@ -303,7 +321,7 @@ namespace TestControlCenter
             StartExam(window.ViewModel.SelectedStudent, window.TestItem);
         }
 
-        private void StartExam(MftStudent selectedStudent, TestItem testItem)
+        private void StartExam(Student selectedStudent, TestItem testItem)
         {
             if(testItem.Questions.Count < 1)
             {
@@ -350,8 +368,8 @@ namespace TestControlCenter
         {
             var fileSelectorDialog = new OpenFileDialog
             {
-                DefaultExt = ".emft",
-                Filter = "MFT Test File|*.emft"
+                DefaultExt = ".reta",
+                Filter = "Test File|*.reta"
             };
 
             var result = fileSelectorDialog.ShowDialog();
@@ -389,10 +407,10 @@ namespace TestControlCenter
 
             var saveFileDialog = new SaveFileDialog
             {
-                FileName = $"{item.Title}.emft",
+                FileName = $"{item.Title}.reta",
                 OverwritePrompt = true,
-                Filter = "MFT Test File|*.emft",
-                DefaultExt = ".emft"
+                Filter = "Test File|*.reta",
+                DefaultExt = ".reta"
             };
 
             var result = saveFileDialog.ShowDialog();
@@ -447,6 +465,16 @@ namespace TestControlCenter
             };
 
             window.ShowDialog();
+        }
+
+        private async void SyncButton_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = (Button)sender;
+            btn.IsEnabled = false;
+
+            await ViewModel.SyncTestItems();
+
+            btn.IsEnabled = true;
         }
     }
 }

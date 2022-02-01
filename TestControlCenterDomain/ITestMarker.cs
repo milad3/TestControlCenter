@@ -1,4 +1,6 @@
-﻿namespace TestControlCenterDomain
+﻿using System;
+
+namespace TestControlCenterDomain
 {
     public interface ITestMarker
     {

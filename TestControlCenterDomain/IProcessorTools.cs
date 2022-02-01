@@ -5,8 +5,10 @@ namespace TestControlCenterDomain
 {
     public interface IProcessorTools
     {
-        List<Rectangle> SearchBitmap(Bitmap smallBmp, Bitmap bigBmp, double tolerance);
+        List<ImageSearchResultItem> SearchBitmap(Bitmap smallBmp, Bitmap bigBmp, double tolerance);
 
-        List<Rectangle> SearchBitmap(Bitmap smallBmp, Bitmap bigBmp, double tolerance, Rectangle searchArea);
+        List<ImageSearchResultItem> SearchBitmap(Bitmap smallBmp, Bitmap bigBmp, double tolerance, Rectangle searchArea);
+
+        List<ImageSearchResultItem> SearchImage(string smallImageFilePath, string bigImageFilePath, double tolerance);
     }
 }

@@ -113,7 +113,7 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Cursor="Hand" x:Name="QuestionTextBorder" CornerRadius="8" Margin="7,15,7,20" MouseUp="QuestionContainer_Click">
+                                        <Border Cursor="Hand" x:Name="QuestionTextBorder" CornerRadius="8" Margin="7,18,7,25" MouseUp="QuestionContainer_Click">
                                             <Border.Style>
                                                 <Style TargetType="Border">
                                                     <Setter Property="Background" Value="#FFF" />
@@ -127,6 +127,16 @@
                                                         <DataTrigger Binding="{Binding IsSelected, Mode=TwoWay}" Value="False">
                                                             <DataTrigger.Setters>
                                                                 <Setter Property="Opacity" Value=".3" />
+                                                            </DataTrigger.Setters>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Bookmarked, Mode=TwoWay}" Value="True">
+                                                            <DataTrigger.Setters>
+                                                                <Setter Property="Opacity" Value=".75" />
+                                                            </DataTrigger.Setters>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsSelected, Mode=TwoWay}" Value="True">
+                                                            <DataTrigger.Setters>
+                                                                <Setter Property="Opacity" Value="1" />
                                                             </DataTrigger.Setters>
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsSelected, Mode=TwoWay}" Value="{x:Null}">
@@ -175,17 +185,28 @@
                                                     <ColumnDefinition />
                                                     <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
-                                                <Border TextBlock.Foreground="MediumSlateBlue" x:Name="QuestionNumberBorder" Background="#FFF" VerticalAlignment="Top" Width="20" Height="20" CornerRadius="10" Margin="0,-15,10,0">
-                                                    <TextBlock Text="{Binding Order}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                </Border>
+                                                <Border TextBlock.Foreground="MediumSlateBlue" x:Name="QuestionNumberBorder" Background="#FFF" MinWidth="25" VerticalAlignment="Top" Height="20" CornerRadius="10,10,0,0" Margin="0,-16,10,0">
+                                                    <Grid HorizontalAlignment="Center">
+                                                        <TextBlock Text="{Binding Order}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Grid>
+                                                </Border>                                                
                                                 <TextBlock Margin="-25,3,-45,0" Grid.Column="1" Text="{Binding Question}" TextWrapping="Wrap" />
                                                 <Border TextBlock.Foreground="#999" x:Name="QuestionScoreBorder" MinWidth="45" CornerRadius="0,0,5,5" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,-24" Background="#FFF">
-                                                    <WrapPanel HorizontalAlignment="Center" Margin="0">
+                                                    <WrapPanel HorizontalAlignment="Center" Margin="5, 0">
                                                         <Viewbox VerticalAlignment="Center" HorizontalAlignment="Center" Stretch="Uniform" StretchDirection="DownOnly">
                                                             <TextBlock HorizontalAlignment="Center" Text="{Binding Score}"/>
                                                         </Viewbox>
-                                                        <TextBlock Margin="2,0,0,0" Opacity=".7" VerticalAlignment="Center" HorizontalAlignment="Center" Text="نمره" FontSize="9"/>
+                                                        <TextBlock Margin="2,0,2,0" Opacity=".7" VerticalAlignment="Center" HorizontalAlignment="Center" Text="نمره" FontSize="9"/>
+                                                        <materialDesign:PackIcon Grid.Column="0" Margin="0,1,0,0" Visibility="{Binding IsAnswered, Converter={StaticResource BoolToVis}}" Kind="AccountCheckOutline"></materialDesign:PackIcon>
                                                     </WrapPanel>
+                                                </Border>
+                                                <Border VerticalAlignment="Top" HorizontalAlignment="Right" Grid.ColumnSpan="3" Margin="0, -20, 0 , 0" x:Name="ToolsContainer">
+                                                    <Button materialDesign:ShadowAssist.ShadowDepth="Depth0" BorderThickness="0" Margin="0" Padding="0" Background="Transparent" Height="20" Click="BookmarkToggle_Click">
+                                                        <Grid>
+                                                            <materialDesign:PackIcon Kind="BookmarkAddOutline" Foreground="SlateBlue" Visibility="{Binding NotBookmarked, Converter={StaticResource BoolToVis}}"/>
+                                                            <materialDesign:PackIcon Kind="Bookmark" Foreground="SlateBlue" Visibility="{Binding Bookmarked, Converter={StaticResource BoolToVis}}"/>
+                                                        </Grid>
+                                                    </Button>
                                                 </Border>
                                             </Grid>
                                         </Border>

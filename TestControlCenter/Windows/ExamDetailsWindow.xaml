@@ -26,7 +26,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Margin="15,0,0,0" Text="آزمون دهنده:" Foreground="#FF959595" />
-                <TextBlock Margin="8,0,0,0" Text="{Binding TestMark.MftStudent.Name}" />
+                <TextBlock Margin="8,0,0,0" Text="{Binding TestMark.Student.Name}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Margin="15,0,0,0" Text="تاریخ:" Foreground="#FF959595" />
@@ -79,8 +79,8 @@
                                 </Grid>                                
                                 <Border Grid.Row="1" TextBlock.Foreground="#999" VerticalAlignment="Bottom" Margin="0,0,0,0" Background="#FFF">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBox MinWidth="65" materialDesign:TextFieldAssist.SuffixText="نمره اصلی" Text="{Binding PrivateScore, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" />
-                                        <TextBox Margin="10,0,0,0" MinWidth="60" materialDesign:TextFieldAssist.SuffixText="نمره نهایی" Text="{Binding PublicScore, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <!--<TextBox MinWidth="65" materialDesign:TextFieldAssist.SuffixText="نمره اصلی" Text="{Binding PrivateScore, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" />-->
+                                        <TextBox Margin="10,0,0,0" MinWidth="60" materialDesign:TextFieldAssist.SuffixText="نمره نهایی" Text="{Binding PublicScore, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" />
                                         <Button ToolTip="عکس ها" Click="SequenceViewButton_Click" Background="WhiteSmoke" BorderBrush="Gray" Height="24" Width="24" materialDesign:ShadowAssist.ShadowDepth="Depth0" Margin="10,0,0,0" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}">
                                             <materialDesign:PackIcon Kind="ImageFilter" />
                                         </Button>
@@ -97,7 +97,7 @@
         </ScrollViewer>
         <Rectangle Grid.Row="2" Fill="Gainsboro" />
         <Canvas Grid.Row="1">
-            <TextBox Text="{Binding TestMark.Score, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" materialDesign:HintAssist.Hint="نمره" materialDesign:HintAssist.IsFloating="True" Canvas.Bottom="0" Canvas.Left="0" Background="Gainsboro" Width="100" BorderBrush="Gainsboro" HorizontalContentAlignment="Center" Foreground="#333" FontSize="15"/>
+            <TextBox IsReadOnly="True" x:Name="ScoreTextBox" Text="{Binding TestMark.Score, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" materialDesign:HintAssist.Hint="نمره" materialDesign:HintAssist.IsFloating="True" Canvas.Bottom="0" Canvas.Left="0" Background="Gainsboro" Width="100" BorderBrush="Gainsboro" HorizontalContentAlignment="Center" Foreground="#333" FontSize="15"/>
         </Canvas>
         <StackPanel Grid.Row="2">
             <Grid x:Name="ButtonsContainer" Margin="5">
@@ -108,9 +108,9 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Button FontSize="11" Margin="5" VerticalAlignment="Top" Content="تصحیح اتوماتیک" Foreground="#DD424242" Background="#FFF3F3F3" Click="Button_Click" />
-                <Button BorderBrush="#FFB681B6" Background="#FFF3F3F3" FontSize="11" Margin="5" VerticalAlignment="Top" Grid.Column="1" Content="ثبت نمره" Grid.Row="1" />
-                <Button FontSize="11" Margin="5" VerticalAlignment="Top" Grid.Column="2" Content="نهایی کردن آزمون" Background="#FFF3F3F3" BorderBrush="#FFD67575" />
-                <Button FontSize="11" Margin="5" VerticalAlignment="Top" Grid.Column="3" Content="ارسال اطلاعات" Background="#FFF3F3F3" BorderBrush="#FF7BB09F" />
+                <Button BorderBrush="#FFB681B6" Background="#FFF3F3F3" FontSize="11" Margin="5" VerticalAlignment="Top" Grid.Column="1" Content="ثبت نمره" Grid.Row="1" Click="Button_Click_1" />
+                <Button FontSize="11" Margin="5" VerticalAlignment="Top" Grid.Column="2" Content="نهایی کردن آزمون" Background="#FFF3F3F3" BorderBrush="#FFD67575" Click="Button_Click_3" />
+                <Button x:Name="SyncButton" FontSize="11" Margin="5" VerticalAlignment="Top" Grid.Column="3" Content="ارسال اطلاعات" Background="#FFF3F3F3" BorderBrush="#FF7BB09F" Click="Button_Click_4" />
             </Grid>
             <ProgressBar Background="Gainsboro" BorderThickness="0" Value="{Binding LoadingValue}" Foreground="Orange" />
         </StackPanel>        

@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using TestControlCenter.Properties;
+using TestControlCenter.Tools;
 
 namespace TestControlCenter.Services
 {
@@ -14,17 +15,21 @@ namespace TestControlCenter.Services
             var pass = Settings.Default.DatabasePassword;
             if (string.IsNullOrEmpty(pass))
             {
-                pass = GenerateAndSaveRawPassword();
+                pass = GenerateAndSavePassword();
+            }
+            else
+            {
+                pass = StringProtector.Unprotect(Settings.Default.DatabasePassword);
             }
 
             return CreateMD5(pass);
         }
 
-        private static string GenerateAndSaveRawPassword()
+        private static string GenerateAndSavePassword()
         {
             var data = GenerateString(8);
 
-            Settings.Default.DatabasePassword = data;
+            Settings.Default.DatabasePassword = StringProtector.Protect(data);
             Settings.Default.Save();
             Settings.Default.Reload();
 

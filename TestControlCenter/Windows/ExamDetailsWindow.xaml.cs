@@ -84,5 +84,53 @@ namespace TestControlCenter.Windows
 
             ButtonsContainer.IsEnabled = true;
         }
+
+        private async void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            ViewModel.TestMark.Score = ViewModel.TestMark.TestMarkAnswers.Sum(x => x.PublicScore);
+            ScoreTextBox.Text = ViewModel.TestMark.Score.ToString();
+
+            await ViewModel.SaveResults();
+        }
+
+        private async void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            await ViewModel.SaveResults();
+
+            NotificationsHelper.Information("اطلاعات با موفقیت ذخیره شد.", "ذخیره");
+        }
+
+        private async void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            await ViewModel.FinilizeResults();
+
+            NotificationsHelper.Information("وضعیت آزمون به نهایی تغییر کرد.", "توجه");
+        }
+
+        private async void Button_Click_4(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.TestMark.IsSynced)
+            {
+                NotificationsHelper.Warning("اطلاعات آزمون قبلا ارسال و ذخیره شده است.", "توجه");
+                return;
+            }
+
+            SyncButton.IsEnabled = false;
+            var temp = SyncButton.Content;
+            SyncButton.Content = "لطفا منتظر باشید...";
+
+            var result = await ViewModel.Sync();
+            if(result)
+            {
+                NotificationsHelper.Information("اطلاعات با موفقیت ارسال شد.", "سرور");
+            }
+            else
+            {
+                NotificationsHelper.Error("در ارسال اطلاعات به سرور خطایی پیش آمد", "خطا");
+            }
+
+            SyncButton.Content = temp;
+            SyncButton.IsEnabled = true;
+        }
     }
 }

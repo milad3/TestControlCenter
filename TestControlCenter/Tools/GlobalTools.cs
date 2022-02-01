@@ -10,6 +10,14 @@ namespace TestControlCenter.Tools
 {
     public class GlobalTools
     {
+        static TimeZoneInfo iranTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Iran Standard Time");
+
+        public static DateTime GetIranTimeZoneNow()
+        {
+            var utcDateTime = DateTime.UtcNow;
+            return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, iranTimeZone);
+        }
+
         public static string GetNewFileName(string dir, string ext)
         {
             var result = $"{dir}\\{Guid.NewGuid()}{ext}";
@@ -86,15 +94,24 @@ namespace TestControlCenter.Tools
 
             var loaded = Assembly.LoadFrom(dll);
 
-            var types = loaded.GetTypes();
-            var type = types.First(x => x.GetInterfaces().Any(i => i.Name == nameof(ITestMarker)));
+            try
+            {
+                var types = loaded.GetTypes();
+                var type = types.First(x => x.GetInterfaces().Any(i => i.Name == nameof(ITestMarker)));
 
-            var testMarker = Activator.CreateInstance(type) as ITestMarker;
-            var processor = new ProcessorTools();
-            var advancedProcessor = new ProcessorToolsAdvanced();
-            testMarker.Configure(processor, advancedProcessor, imagesDir);
+                var testMarker = Activator.CreateInstance(type) as ITestMarker;
+                var processor = new ProcessorTools();
+                var advancedProcessor = new ProcessorToolsAdvanced();
+                testMarker.Configure(processor, advancedProcessor, imagesDir);
 
-            return testMarker;
+                return testMarker;
+            }
+            catch (Exception ex)
+            {
+                NotificationsHelper.Error("در بارگذاری آزمون خطا وجود دارد.", $"خطا {ex.HResult}");
+            }
+
+            return null;
         }
     }
 }

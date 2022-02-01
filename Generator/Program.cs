@@ -237,7 +237,7 @@ namespace Generator
 
             var parent = Directory.GetParent(DIR);
 
-            var path = $"{parent}\\excel_test.emft";
+            var path = $"{parent}\\excel_test.reta";
             File.Delete(path);
 
             ZipFile.CreateFromDirectory(DIR, path);

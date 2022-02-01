@@ -15,7 +15,7 @@
         TextOptions.TextRenderingMode="Auto"
         FontFamily="{StaticResource MainFont}"
         FlowDirection="RightToLeft"
-        Title="مجتمع فنی تهران" Height="700" Width="1200" MinWidth="600" MinHeight="600" WindowStartupLocation="CenterScreen" SizeChanged="Window_SizeChanged" Loaded="Window_Loaded" Closed="Window_Closed">
+        Title="آزمون" Height="700" Width="1200" MinWidth="600" MinHeight="600" WindowStartupLocation="CenterScreen" SizeChanged="Window_SizeChanged" Loaded="Window_Loaded" Closed="Window_Closed">
     <Grid x:Name="MainContainerGrid" AllowDrop="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -35,7 +35,7 @@
                 <SolidColorBrush Color="White" />
             </Rectangle.Fill>
         </Rectangle>
-        <materialDesign:DrawerHost FlowDirection="RightToLeft" IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">
+        <materialDesign:DrawerHost FlowDirection="RightToLeft">
             <DockPanel>
                 <materialDesign:ColorZone Padding="2" materialDesign:ShadowAssist.ShadowDepth="Depth0" Mode="PrimaryLight" DockPanel.Dock="Top" Background="LightGray">
                     <Grid>
@@ -60,12 +60,12 @@
                                 <materialDesign:PackIcon Kind="QuestionMarkRhombus" Height="24" Width="24" />
                             </Button>
                         </DockPanel>
-                        <TextBlock Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="#DD383838">مجتمع فنی تهران</TextBlock>
+                        <TextBlock x:Name="titleTextBlock" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="#DD383838">نرم افزار آزمون</TextBlock>
                     </Grid>
                 </materialDesign:ColorZone>
             </DockPanel>
         </materialDesign:DrawerHost>
-        <Popup FlowDirection="RightToLeft" x:Name="MainMenuPopup" Placement="Relative" PlacementRectangle="2,2,0,0" StaysOpen="False" AllowsTransparency="True" Closed="MainMenuPopup_Closed" MinWidth="330">
+        <Popup FlowDirection="RightToLeft" x:Name="MainMenuPopup" Placement="Relative" PopupAnimation="Fade" PlacementTarget="{Binding ElementName=MainContainerGrid}" PlacementRectangle="330,2,0,0" StaysOpen="False" AllowsTransparency="True" Closed="MainMenuPopup_Closed" Width="330">
             <Border CornerRadius="0,0,8,0" BorderBrush="Gray" BorderThickness="0,0,2,2">
                 <Border.Background>
                     <RadialGradientBrush>
@@ -115,13 +115,13 @@
                             <Button Margin="5" FontSize="11" Background="NavajoWhite" Click="GetNewTestItemsButton_Click">
                                 دریافت آزمون های جدید
                             </Button>
-                            <Button Grid.Column="1" Margin="5" FontSize="11" Background="AntiqueWhite">
+                            <Button Grid.Column="1" Margin="5" FontSize="11" Background="AntiqueWhite"  Click="GetTestItemsButton_Click">
                                 دریافت همه آزمون ها
                             </Button>
                         </Grid>
                         <Separator Margin="5" />
                         <Label HorizontalAlignment="Center" Margin="0,5,0,0" Foreground="Gray">ارسال اطلاعات به سرور</Label>
-                        <Button Margin="5" FontSize="11" Background="FloralWhite">ارسال اطلاعات آزمون های برگزار شده</Button>
+                        <Button Click="SyncButton_Click" Margin="5" FontSize="11" Background="FloralWhite">ارسال اطلاعات آزمون های برگزار شده</Button>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -313,11 +313,11 @@
                     <Border CornerRadius="15,0,15,0" Visibility="{Binding Path=LoadingData, Converter={StaticResource BoolToVis}}">
                         <Border.Background>
                             <RadialGradientBrush>
-                                <GradientStop Offset="0" Color="#BFFFFFFF"></GradientStop>
-                                <GradientStop Offset="1" Color="#F5FFFFFF"></GradientStop>                                
+                                <GradientStop Offset="0" Color="#7FFFFFFF"></GradientStop>
+                                <GradientStop Offset="1" Color="#A5FFFFFF"></GradientStop>                                
                             </RadialGradientBrush>
                         </Border.Background>
-                        <materialDesign:PackIcon Kind="Sync" Width="50" Height="50" Opacity=".5" />
+                        <materialDesign:PackIcon Kind="Sync" Width="32" Height="32" Opacity=".5" />
                     </Border>
                 </Grid>
             </Grid>

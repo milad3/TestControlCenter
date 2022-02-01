@@ -24,11 +24,42 @@ namespace TestControlCenter.Services
             return model;
         }
 
-        internal static async Task<TestMarkingViewModel> GetExamDetailsViewModel(TestMark testMark)
+        public static async Task<TestMarkingViewModel> GetExamDetailsViewModel(TestMark testMark)
         {
             using (var db = new DataService())
             {
                 return await db.GetTestMarkAsync(testMark);
+            }
+        }
+
+        public static async Task<TestStartViewModel> GetTestStartViewModelForStudent()
+        {
+            var key = ServerClient.AuthenticationData.Key;
+            using (var db = new DataService())
+            {
+                var exam = db.GetTestItem(key);
+
+                if (exam == null)
+                {
+                    await CommunicationService.GetTestItem(key);
+                }
+
+                exam = db.GetTestItem(key);
+
+                if(exam == null)
+                {
+                    return null;
+                }
+
+                var mapper = new Mapper(Mappings.TestItemMapperConfiguration);
+
+                var model = new TestStartViewModel
+                {
+                    TestItem = mapper.Map<TestItem, TestItemViewModel>(exam),
+                    SelectedStudent = ServerClient.AuthenticationData.Student
+                };
+
+                return model;
             }
         }
 
@@ -52,7 +83,7 @@ namespace TestControlCenter.Services
             return model;
         }
 
-        public static TestStartViewModel GetTestStartViewModel(List<MftStudent> students, TestItem testItem)
+        public static TestStartViewModel GetTestStartViewModel(List<Student> students, TestItem testItem)
         {
             var mapper = new Mapper(Mappings.TestItemMapperConfiguration);
             var model = new TestStartViewModel
@@ -82,7 +113,7 @@ namespace TestControlCenter.Services
             return model;
         }
 
-        public static ExamViewModel GetExamViewModel(TestItem testItem, MftStudent student, System.Windows.Rect workArea)
+        public static ExamViewModel GetExamViewModel(TestItem testItem, Student student, System.Windows.Rect workArea)
         {
             var ExamViewModel = new ExamViewModel
             {

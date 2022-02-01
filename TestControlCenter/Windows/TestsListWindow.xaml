@@ -42,9 +42,9 @@
                 <ScrollViewer Margin="5" VerticalScrollBarVisibility="Auto">
                     <DataGrid x:Name="TestsDataGrid" MouseDoubleClick="DataGrid_MouseDoubleClick" IsReadOnly="True" ItemsSource="{Binding Tests}" AutoGenerateColumns="False" FontSize="10" LoadingRow="DataGrid_LoadingRow" CanUserAddRows="False" CanUserDeleteRows="False">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Width="*" Header="آزمون دهنده" Binding="{Binding MftStudent.Name}" />
+                            <DataGridTextColumn Width="*" Header="آزمون دهنده" Binding="{Binding Student.Name}" />
                             <DataGridTextColumn Width="*" Header="آزمون" Binding="{Binding TestItem.Title}" />
-                            <DataGridTextColumn Width="80" Header="تاریخ" Binding="{Binding StartDateTime, Converter={StaticResource DateTimeToPersianDateTime}}" />
+                            <DataGridTextColumn Width="90" Header="تاریخ" Binding="{Binding StartDateTime, Converter={StaticResource DateTimeToPersianDateTime}}" />
                             <DataGridTextColumn Header="نمره" Binding="{Binding Score}" />
                         </DataGrid.Columns>
                     </DataGrid>
