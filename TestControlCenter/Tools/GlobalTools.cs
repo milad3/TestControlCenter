@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -16,6 +17,26 @@ namespace TestControlCenter.Tools
         {
             var utcDateTime = DateTime.UtcNow;
             return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, iranTimeZone);
+        }
+
+        public static List<string> GetDesktopFiles()
+        {
+            var dir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+            return Directory.GetFiles(dir, "", SearchOption.AllDirectories).ToList();
+        }
+
+        public static void CleanUpFolder(List<string> source, List<string> compare)
+        {
+            foreach (var item in source)
+            {
+                if(compare.Contains(item))
+                {
+                    continue;
+                }
+
+                File.Delete(item);
+            }
         }
 
         public static string GetNewFileName(string dir, string ext)

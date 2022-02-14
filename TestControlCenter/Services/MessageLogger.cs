@@ -1,4 +1,5 @@
-﻿using TestControlCenter.Data;
+﻿using System.Threading.Tasks;
+using TestControlCenter.Data;
 using TestControlCenterDomain;
 
 namespace TestControlCenter.Services
@@ -20,6 +21,18 @@ namespace TestControlCenter.Services
                 db.Logs.Add(message);
 
                 db.SaveChanges();
+            }
+
+            return message;
+        }
+
+        public async Task<LogMessage> LogMessageAsync(LogMessage message)
+        {
+            using (var db = new LogDatabaseContext())
+            {
+                db.Logs.Add(message);
+
+                await db.SaveChangesAsync();
             }
 
             return message;

@@ -6,6 +6,7 @@ using TestControlCenter.Services;
 using TestControlCenter.Infrastructure;
 using TestControlCenter.Tools;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace TestControlCenter.Windows
 {
@@ -18,6 +19,9 @@ namespace TestControlCenter.Windows
 
         public delegate void ExamEndedEventHandler(object sender, EventArgs e);
         public event ExamEndedEventHandler ExamEndedEvent;
+
+        public delegate void ExamStartedEventHandler(object sender, EventArgs e);
+        public event ExamStartedEventHandler ExamStartedEvent;
 
         public ExamViewModel ViewModel { get; set; }
         public bool IsFinished { get; private set; }
@@ -47,7 +51,7 @@ namespace TestControlCenter.Windows
 
         private void ViewModel_TimesUpEvent(object sender, EventArgs args) => Dispatcher.Invoke(() =>
         {
-            if(IsFinished)
+            if (IsFinished)
             {
                 return;
             }
@@ -59,6 +63,8 @@ namespace TestControlCenter.Windows
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = ViewModel;
+
+            ExamStartedEvent?.Invoke(ViewModel, null);
 
             GlobalValues.ExamWindow = this;
 
@@ -154,6 +160,19 @@ namespace TestControlCenter.Windows
                 NotificationsHelper.Error("خطا در ثبت اطلاعات آزمون", "خطا");
             }
 
+            if (GlobalValues.Test.TerminateAfterExam)
+            {
+                var processes = GlobalValues.Test.Processes.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var process in processes)
+                {
+                    var wanted = Process.GetProcessesByName(process);
+                    foreach (var p in wanted)
+                    {
+                        p.Kill();
+                    }
+                }
+            }
+
             GlobalValues.ExamIsRunning = false;
             GlobalValues.Question = null;
             GlobalValues.Student = null;
@@ -193,7 +212,7 @@ namespace TestControlCenter.Windows
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if(IsFinished)
+            if (IsFinished)
             {
                 return;
             }

@@ -1,4 +1,5 @@
-﻿using TestControlCenter.Models;
+﻿using System.Collections.Generic;
+using TestControlCenter.Models;
 using TestControlCenter.Windows;
 using TestControlCenterDomain;
 
@@ -19,5 +20,7 @@ namespace TestControlCenter.Infrastructure
         public static ExamAltWindow ExamAltWindow { get; set; }
 
         public static ITestMarker TestMarker { get; set; }
+
+        public static List<string> DesktopFiles { get; set; }
     }
 }

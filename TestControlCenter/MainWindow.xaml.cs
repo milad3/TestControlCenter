@@ -336,12 +336,22 @@ namespace TestControlCenter
 
             window.ExamEndedEvent += Window_ExamEndedEvent;
 
+            window.ExamStartedEvent += Window_ExamStartedEvent;
+
             window.Show();
+        }
+
+        private void Window_ExamStartedEvent(object sender, EventArgs e)
+        {
+            GlobalValues.DesktopFiles = GlobalTools.GetDesktopFiles();
         }
 
         private void Window_ExamEndedEvent(object sender, EventArgs e)
         {
             Visibility = Visibility.Visible;
+
+            var currentFiles = GlobalTools.GetDesktopFiles();
+
         }
 
         private void UnBlurTheBackground()

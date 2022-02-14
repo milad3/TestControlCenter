@@ -31,6 +31,10 @@ namespace TestControlCenterDomain
 
         public string Software { get; set; }
 
+        public string Processes { get; set; }
+
+        public bool TerminateAfterExam { get; set; }
+
         public string SoftwareVersion { get; set; }
 
         public string ShortDescription { get; set; }
