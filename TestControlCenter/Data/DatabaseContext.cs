@@ -15,6 +15,7 @@ namespace TestControlCenter.Data
             var conn = new SQLiteConnection(Settings.Default.DatabaseConnection);
 
             conn.SetPassword(SecurityTools.GetDatabasePassword());
+
             conn.Open();
 
             optionsBuilder.UseSqlite(conn);

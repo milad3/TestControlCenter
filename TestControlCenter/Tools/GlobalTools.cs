@@ -99,7 +99,7 @@ namespace TestControlCenter.Tools
             return $"{StaticValues.RootPath}\\Files\\Tests\\{testItem.Key}\\";
         }
 
-        public static ITestMarker LoadTestMarkerProcessor(TestItem testItem, string imagesDir)
+        public static ITestMarker LoadTestMarkerProcessor(TestItem testItem, TestBasicInformation testBasicInformation)
         {
             var dll = testItem.ProcessorAddress;
 
@@ -123,7 +123,7 @@ namespace TestControlCenter.Tools
                 var testMarker = Activator.CreateInstance(type) as ITestMarker;
                 var processor = new ProcessorTools();
                 var advancedProcessor = new ProcessorToolsAdvanced();
-                testMarker.Configure(processor, advancedProcessor, imagesDir);
+                testMarker.Configure(processor, advancedProcessor, testBasicInformation);
 
                 return testMarker;
             }

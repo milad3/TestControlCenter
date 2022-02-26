@@ -31,7 +31,7 @@ namespace Generator
                 GroupId = "5c2232dbc0f947040d00010d",
                 GroupName = "حسابداری",
                 HasNegativeScore = false,
-                Key = "5c2232dbc0f947040d00010d",
+                Key = "600d52d1e0ccbc220b9e7e1a",
                 MaxScore = 20,
                 MinScore = 0,
                 PassScore = 12,
@@ -44,7 +44,7 @@ namespace Generator
                 TestLevel = TestLevel.Level2,
                 TimeAllowedInMin = 60,
                 Title = "آزمون عملی Excel 2019",
-                Version = "1",
+                Version = "1.501",
                 TotalQuestionsCount = 25,
                 IsActive = true,
                 Questions = new List<TestItemQuestion>
@@ -68,7 +68,7 @@ namespace Generator
                             new TestItemQuestionClue
                             {
                                 Forced = true,
-                                Order = 3,
+                                Order = 2,
                                 ImageAddress = "1f",
                                 IsForFinalAnswer = true
                             }
@@ -126,8 +126,13 @@ namespace Generator
                             {
                                 Forced = true,
                                 Order = 1,
-                                ImageAddress = "4f",
-                                IsForFinalAnswer = true
+                                ImageAddress = "4c1"
+                            },
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "4c2"
                             }
                         }
                     },
@@ -139,12 +144,31 @@ namespace Generator
                         Score = 1,
                         Clues = new List<TestItemQuestionClue>
                         {
+                             new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "5c1",
+                                IsForFinalAnswer = true
+                            },
                             new TestItemQuestionClue
                             {
                                 Forced = true,
                                 Order = 1,
-                                ImageAddress = "5f",
+                                ImageAddress = "5c2",
                                 IsForFinalAnswer = true
+                            },
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "5c1"
+                            },
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "5c2"
                             }
                         }
                     },
@@ -228,7 +252,21 @@ namespace Generator
                         Level = TestQuestionLevel.Level3,
                         Order = 8,
                         Score = 2,
-                        
+                        Clues = new List<TestItemQuestionClue>
+                        {
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "8c1"
+                            },
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 2,
+                                ImageAddress = "8c2"
+                            }
+                        }
                     },
                     new TestItemQuestion
                     {
@@ -236,7 +274,21 @@ namespace Generator
                         Level = TestQuestionLevel.Level2,
                         Order = 9,
                         Score = 1,
-
+                        Clues = new List<TestItemQuestionClue>
+                        {
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "9c1"
+                            },
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 2,
+                                ImageAddress = "9c2"
+                            }
+                        }
                     },
                     new TestItemQuestion
                     {
@@ -244,7 +296,15 @@ namespace Generator
                         Level = TestQuestionLevel.Level2,
                         Order = 10,
                         Score = 2,
-
+                        Clues = new List<TestItemQuestionClue>
+                        {
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "10c"
+                            }
+                        }
                     },
                     new TestItemQuestion
                     {
@@ -252,7 +312,21 @@ namespace Generator
                         Level = TestQuestionLevel.Level3,
                         Order = 11,
                         Score = 3,
-
+                        Clues = new List<TestItemQuestionClue>
+                        {
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "11c1"
+                            },
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 2,
+                                ImageAddress = "11c2"
+                            }
+                        }
                     },
                     new TestItemQuestion
                     {
@@ -260,7 +334,15 @@ namespace Generator
                         Level = TestQuestionLevel.Level3,
                         Order = 12,
                         Score = 2,
-
+                        Clues = new List<TestItemQuestionClue>
+                        {
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "12c"
+                            }
+                        }
                     },
                     new TestItemQuestion
                     {
@@ -268,7 +350,21 @@ namespace Generator
                         Level = TestQuestionLevel.Level4,
                         Order = 13,
                         Score = 4,
-
+                        Clues = new List<TestItemQuestionClue>
+                        {
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "13c1"
+                            },
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 2,
+                                ImageAddress = "13c2"
+                            }
+                        }
                     },
                     new TestItemQuestion
                     {
@@ -276,7 +372,15 @@ namespace Generator
                         Level = TestQuestionLevel.Level2,
                         Order = 14,
                         Score = 2,
-
+                         Clues = new List<TestItemQuestionClue>
+                        {
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "14c"
+                            }
+                        }
                     },
                     new TestItemQuestion
                     {
@@ -284,7 +388,28 @@ namespace Generator
                         Level = TestQuestionLevel.Level3,
                         Order = 15,
                         Score = 2,
-
+                        Clues = new List<TestItemQuestionClue>
+                        {
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "15f",
+                                IsForFinalAnswer = true
+                            },
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 2,
+                                ImageAddress = "15c1"
+                            },
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "15c2"
+                            }
+                        }
                     },
                     new TestItemQuestion
                     {
@@ -292,7 +417,15 @@ namespace Generator
                         Level = TestQuestionLevel.Level3,
                         Order = 16,
                         Score = 2.5,
-
+                        Clues = new List<TestItemQuestionClue>
+                        {
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "16c"
+                            }
+                        }
                     },
                     new TestItemQuestion
                     {
@@ -300,7 +433,16 @@ namespace Generator
                         Level = TestQuestionLevel.Level3,
                         Order = 17,
                         Score = 3.5,
-
+                        Clues = new List<TestItemQuestionClue>
+                        {
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "17f",
+                                IsForFinalAnswer = true
+                            }
+                        }
                     },
                     new TestItemQuestion
                     {
@@ -316,7 +458,21 @@ namespace Generator
                         Level = TestQuestionLevel.Level4,
                         Order = 19,
                         Score = 4,
-
+                         Clues = new List<TestItemQuestionClue>
+                        {
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "19c1"
+                            },
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "19c2"
+                            }
+                        }
                     },
                     new TestItemQuestion
                     {
@@ -332,7 +488,21 @@ namespace Generator
                         Level = TestQuestionLevel.Level2,
                         Order = 21,
                         Score = 1.5,
-
+                        Clues = new List<TestItemQuestionClue>
+                        {
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "21c1"
+                            },
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "21c2"
+                            }
+                        }
                     },
                     new TestItemQuestion
                     {
@@ -340,7 +510,16 @@ namespace Generator
                         Level = TestQuestionLevel.Level2,
                         Order = 22,
                         Score = 1,
-
+                        Clues = new List<TestItemQuestionClue>
+                        {
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "22f",
+                                IsForFinalAnswer = true
+                            }
+                        }
                     },
                     new TestItemQuestion
                     {
@@ -348,7 +527,16 @@ namespace Generator
                         Level = TestQuestionLevel.Level2,
                         Order = 23,
                         Score = 1.5,
-
+                        Clues = new List<TestItemQuestionClue>
+                        {
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "23f",
+                                IsForFinalAnswer = true
+                            }
+                        }
                     },
                     new TestItemQuestion
                     {
@@ -356,7 +544,21 @@ namespace Generator
                         Level = TestQuestionLevel.Level2,
                         Order = 24,
                         Score = 1,
-
+                        Clues = new List<TestItemQuestionClue>
+                        {
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "24c1"
+                            },
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "24c2"
+                            }
+                        }
                     },
                     new TestItemQuestion
                     {
@@ -364,7 +566,15 @@ namespace Generator
                         Level = TestQuestionLevel.Level2,
                         Order = 25,
                         Score = 1.5,
-
+                        Clues = new List<TestItemQuestionClue>
+                        {
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "25c"
+                            }
+                        }
                     },
                     new TestItemQuestion
                     {
@@ -372,7 +582,15 @@ namespace Generator
                         Level = TestQuestionLevel.Level3,
                         Order = 26,
                         Score = 2.5,
-
+                        Clues = new List<TestItemQuestionClue>
+                        {
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "26c"
+                            }
+                        }
                     }
                 }
             };
@@ -399,7 +617,7 @@ namespace Generator
 
         private static void CleanUp()
         {
-            if(Directory.Exists(DIR))
+            if (Directory.Exists(DIR))
             {
                 Directory.Delete(DIR, true);
             }

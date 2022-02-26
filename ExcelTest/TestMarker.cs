@@ -14,13 +14,17 @@ namespace ExcelTest
         private IProcessorTools processor;
         private IProcessorTools processorAdvanced;
         private string imagesDir;
+        private TestBasicInformation testBasicInformation;
 
-        public void Configure(IProcessorTools processorTools, IProcessorTools advancedProcessorTools, string imagesDir)
+        public void Configure(IProcessorTools processorTools,
+            IProcessorTools advancedProcessorTools,
+            TestBasicInformation testBasicInformation)
         {
             processor = processorTools;
             processorAdvanced = advancedProcessorTools;
 
-            this.imagesDir = imagesDir;
+            imagesDir = testBasicInformation.ImagesDirectory;
+            this.testBasicInformation = testBasicInformation;
         }
 
         private (int result, List<ImageSearchResultItem> locations) CheckImages(string clueImage, string answerImage, double tolerance)
@@ -48,15 +52,15 @@ namespace ExcelTest
                 case 1:
                     var results = AnswerMarking(answer, tolerance, result);
 
-                    if(results?.Count > 0)
+                    if (results?.Count > 0)
                     {
                         var up = results.OrderBy(x => x.Y).First();
-                        if (!results.Any(x => x.Y > up.Y + 150))
+                        if (!results.Any(x => x.Y > up.Y + 350))
                         {
                             answer.PublicScore = 0;
                         }
                     }
-                    if(answer.Records?.Any(x => x.Data == "true") == false)
+                    if (answer.Records?.Any(x => x.Data == "true") == false)
                     {
                         CluesMarking(answer, tolerance * .75, result);
                         if (answer.PrivateScore != 100)
@@ -73,7 +77,7 @@ namespace ExcelTest
                         answer.PublicScore = answer.TestItemQuestion.Score;
                     }
 
-                    if(answer.PrivateScore != 100)
+                    if (answer.PrivateScore != 100)
                     {
                         answer.PublicScore = 0;
                     }
@@ -83,10 +87,23 @@ namespace ExcelTest
                     CluesMarking(answer, tolerance, result);
                     break;
                 case 4:
-                    AnswerMarking(answer, tolerance, result);
+                    CluesMarking(answer, tolerance, result);
+                    if (answer.PrivateScore == 100)
+                    {
+                        answer.PublicScore = answer.TestItemQuestion.Score;
+                    }
                     break;
                 case 5:
                     AnswerMarking(answer, tolerance, result);
+
+                    if (answer.PublicScore == 0)
+                    {
+                        CluesMarking(answer, tolerance, result);
+                        if (answer.PrivateScore == 100)
+                        {
+                            answer.PublicScore = answer.TestItemQuestion.Score;
+                        }
+                    }
                     break;
                 case 6:
                     AnswerMarking(answer, tolerance, result);
@@ -101,6 +118,110 @@ namespace ExcelTest
                     AnswerMarking(answer, tolerance, result);
                     CluesMarking(answer, tolerance, result);
 
+                    break;
+                case 8:
+                    CluesMarking(answer, tolerance, result);
+                    if (answer.PrivateScore == 100)
+                    {
+                        answer.PublicScore = answer.TestItemQuestion.Score;
+                    }
+                    break;
+                case 9:
+                    CluesMarking(answer, tolerance, result);
+                    if (answer.PrivateScore == 100)
+                    {
+                        answer.PublicScore = answer.TestItemQuestion.Score;
+                    }
+                    break;
+                case 10:
+                    CluesMarking(answer, tolerance, result);
+                    if (answer.PrivateScore == 100)
+                    {
+                        answer.PublicScore = answer.TestItemQuestion.Score;
+                    }
+                    break;
+                case 11:
+                    CluesMarking(answer, tolerance, result);
+                    if (answer.PrivateScore == 100)
+                    {
+                        answer.PublicScore = answer.TestItemQuestion.Score;
+                    }
+                    break;
+                case 12:
+                    CluesMarking(answer, tolerance, result);
+                    if (answer.PrivateScore == 100)
+                    {
+                        answer.PublicScore = answer.TestItemQuestion.Score;
+                    }
+                    break;
+                case 13:
+                    CluesMarking(answer, tolerance, result);
+                    if (answer.PrivateScore == 100)
+                    {
+                        answer.PublicScore = answer.TestItemQuestion.Score;
+                    }
+                    break;
+                case 14:
+                    CluesMarking(answer, tolerance, result);
+                    if (answer.PrivateScore == 100)
+                    {
+                        answer.PublicScore = answer.TestItemQuestion.Score;
+                    }
+                    break;
+                case 15:
+                    AnswerMarking(answer, tolerance, result);
+                    CluesMarking(answer, tolerance, result);
+                    break;
+                case 16:
+                    CluesMarking(answer, tolerance, result);
+                    if (answer.PrivateScore == 100)
+                    {
+                        answer.PublicScore = answer.TestItemQuestion.Score;
+                    }
+                    break;
+                case 17:
+                    AnswerMarking(answer, tolerance, result);
+                    break;
+                case 19:
+                    CluesMarking(answer, tolerance, result);
+                    if (answer.PrivateScore == 100)
+                    {
+                        answer.PublicScore = answer.TestItemQuestion.Score;
+                    }
+                    break;
+                case 21:
+                    CluesMarking(answer, tolerance, result);
+                    if (answer.PrivateScore == 100)
+                    {
+                        answer.PublicScore = answer.TestItemQuestion.Score;
+                    }
+                    break;
+                case 22:
+                    AnswerMarking(answer, tolerance, result);
+                    break;
+                case 23:
+                    AnswerMarking(answer, tolerance, result);
+                    break;
+                case 24:
+                    CluesMarking(answer, tolerance, result);
+                    if (answer.PrivateScore == 100)
+                    {
+                        answer.PublicScore = answer.TestItemQuestion.Score;
+                    }
+                    break;
+                case 25:
+                    CluesMarking(answer, tolerance, result);
+                    if (answer.PrivateScore == 100)
+                    {
+                        answer.PublicScore = answer.TestItemQuestion.Score;
+                    }
+                    break;
+                case 26:
+                    CluesMarking(answer, tolerance, result);
+                    if (answer.PrivateScore == 100)
+                    {
+                        answer.PublicScore = answer.TestItemQuestion.Score;
+                    }
                     break;
             }
 
@@ -169,7 +290,7 @@ namespace ExcelTest
             var allOtherCluesCount = otherClues.Count();
             var privateScore = result.TestMarkAnswer.PublicScore > 0 ? 100 : 0;
             result.TestMarkAnswer.PrivateScore = allOtherCluesCount == 0 ? privateScore : (cluesCounter * 100) / allOtherCluesCount;
-            if(result.TestMarkAnswer.PrivateScore > 100)
+            if (result.TestMarkAnswer.PrivateScore > 100)
             {
                 result.TestMarkAnswer.PrivateScore = 100;
             }
@@ -187,7 +308,7 @@ namespace ExcelTest
             switch (question.Order)
             {
                 case 1:
-                    if(isMouse)
+                    if (isMouse)
                     {
                         var processes = Process.GetProcessesByName("excel");
                         if (processes == null || processes.Length == 0)
@@ -235,14 +356,14 @@ namespace ExcelTest
                 case 1:
                     var processes = Process.GetProcessesByName("excel");
 
-                    if(processes == null || processes.Length == 0)
+                    if (processes == null || processes.Length == 0)
                     {
                         return "false";
                     }
 
                     var wanted = processes.First();
 
-                    if(wanted.HasExited)
+                    if (wanted.HasExited)
                     {
                         return "-1";
                     }
@@ -257,7 +378,7 @@ namespace ExcelTest
                         return "false";
                     }
                     var lastSaved = File.GetLastWriteTime(filePath);
-                    return (DateTime.Now - lastSaved).TotalMinutes < 5 ? "true" : "false";
+                    return lastSaved > testBasicInformation.TestStartDateTime ? "true" : "false";
                 default:
                     return null;
             }

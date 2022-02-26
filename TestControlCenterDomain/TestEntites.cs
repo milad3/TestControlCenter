@@ -236,4 +236,15 @@ namespace TestControlCenterDomain
 
         public double Tolerance { get; set; }
     }
+
+    public class TestBasicInformation
+    {
+        public DateTime TestStartDateTime { get; set; }
+
+        public string ImagesDirectory { get; set; }
+
+        public dynamic OtherInfo { get; set; }
+
+        public string Temp { get; set; }
+    }
 }

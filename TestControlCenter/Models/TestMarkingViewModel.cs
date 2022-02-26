@@ -78,7 +78,7 @@ namespace TestControlCenter.Models
                         }
                         else
                         {
-                            var result = testMarker.Mark(wanted, .8);
+                            var result = testMarker.Mark(wanted, .95);
 
                             dispatcher.Invoke(() =>
                             {
@@ -105,7 +105,7 @@ namespace TestControlCenter.Models
                                 DateTime = DateTime.Now,
                                 Message = ex.Message,
                                 Details = ex.StackTrace,
-                                Ref = ex.InnerException.Message,
+                                Ref = ex.InnerException?.Message,
                                 Type = LogMessageType.Error
                             });
 
@@ -190,7 +190,13 @@ namespace TestControlCenter.Models
 
         private void LoadProcessor()
         {
-            testMarker = GlobalTools.LoadTestMarkerProcessor(TestMark.TestItem, imagesDir);
+            var testBasicInformation = new TestBasicInformation
+            {
+                ImagesDirectory = imagesDir,
+                TestStartDateTime = DateTime.Now
+            };
+
+            testMarker = GlobalTools.LoadTestMarkerProcessor(TestMark.TestItem, testBasicInformation);
         }
 
         private double GetLoadingValue()

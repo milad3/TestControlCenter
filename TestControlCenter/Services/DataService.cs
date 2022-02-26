@@ -78,11 +78,11 @@ namespace TestControlCenter.Services
                 || x.TestItem.TagsCommaSeperated.ToLower().Contains(filterInLower)).Take(max).OrderByDescending(x => x.Id);
             }
 
-            if(showFinilized && !showMarked && !showUnmarked)
+            if (showFinilized && !showMarked && !showUnmarked)
             {
                 query = query.Where(x => x.IsFinal).Take(max).OrderByDescending(x => x.Id);
             }
-            else if(showFinilized && !showMarked && showUnmarked)
+            else if (showFinilized && !showMarked && showUnmarked)
             {
                 query = query.Where(x => x.IsFinal || !x.IsMarked).Take(max).OrderByDescending(x => x.Id);
             }
@@ -94,15 +94,15 @@ namespace TestControlCenter.Services
             {
                 query = query.Where(x => x.IsFinal || x.IsMarked || !x.IsMarked).Take(max).OrderByDescending(x => x.Id);
             }
-            else if(showUnmarked && !showFinilized && !showMarked)
+            else if (showUnmarked && !showFinilized && !showMarked)
             {
                 query = query.Where(x => !x.IsMarked).Take(max).OrderByDescending(x => x.Id);
             }
-            else if(showUnmarked && !showFinilized && showMarked)
+            else if (showUnmarked && !showFinilized && showMarked)
             {
                 query = query.Where(x => !x.IsMarked || x.IsMarked).Take(max).OrderByDescending(x => x.Id);
             }
-            else if(showMarked && !showFinilized && !showUnmarked)
+            else if (showMarked && !showFinilized && !showUnmarked)
             {
                 query = query.Where(x => x.IsMarked).Take(max).OrderByDescending(x => x.Id);
             }
@@ -131,8 +131,8 @@ namespace TestControlCenter.Services
             wanted.IsMarked = testMark.IsMarked;
 
             wanted.TestMarkAnswers = testMark.TestMarkAnswers;
-            
-            if(testMark.IsSynced)
+
+            if (testMark.IsSynced)
             {
                 wanted.IsSynced = testMark.IsSynced;
                 wanted.SyncDateTime = DateTime.Now;
@@ -218,7 +218,7 @@ namespace TestControlCenter.Services
             };
 
             var dir = $"{StaticValues.RootPath}\\data\\{GlobalValues.Student.Token}\\{Guid.NewGuid()}\\";
-            if(!Directory.Exists(dir))
+            if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
             }
@@ -241,7 +241,7 @@ namespace TestControlCenter.Services
                     item.TestItemQuestion = null;
                     answer.Records.Add(item);
                 }
-                if(items.Count() > 0)
+                if (items.Count() > 0)
                 {
                     answer.TestItemQuestionId = items.First().TestItemQuestionId;
                 }
@@ -287,23 +287,29 @@ namespace TestControlCenter.Services
             {
                 if (Database.TestItems.Any(x => x.Key == item.Key))
                 {
-                    var wanted = Database.TestItems.First(x => x.Key == item.Key);
+                    var wanted = Database.TestItems.Include("Questions.Clues").First(x => x.Key == item.Key);
 
-                    if(File.Exists(wanted.CoverImageAddress))
+                    if (File.Exists(wanted.CoverImageAddress))
                     {
-                        if(string.Compare(wanted.CoverImageAddress, item.CoverImageAddress, true) != 0)
+                        if (string.Compare(wanted.CoverImageAddress, item.CoverImageAddress, true) != 0)
                         {
                             AppCleaner.GarbageFiles.Add(wanted.CoverImageAddress);
                         }
                     }
 
-                    if(File.Exists(wanted.ProcessorAddress))
+                    if (File.Exists(wanted.ProcessorAddress))
                     {
                         if (string.Compare(wanted.ProcessorAddress, item.ProcessorAddress, true) != 0)
                         {
                             AppCleaner.GarbageFiles.Add(wanted.ProcessorAddress);
                         }
                     }
+
+                    foreach (var q in wanted.Questions)
+                    {
+                        q.Clues.Clear();
+                    }
+                    Database.SaveChanges();
 
                     wanted.CourseId = item.CourseId;
                     wanted.CourseName = item.CourseName;
@@ -320,9 +326,28 @@ namespace TestControlCenter.Services
                     wanted.PassScore = item.PassScore;
                     wanted.ProcessorAddress = item.ProcessorAddress;
 
-                    var toBeRemoved = Database.Questions.AsQueryable().Where(x => x.TestItemId == wanted.Id);
-                    Database.Questions.RemoveRange(toBeRemoved);
-                    wanted.Questions = item.Questions;                    
+                    foreach (var q in item.Questions)
+                    {
+                        var wantedQuestion = wanted.Questions.AsQueryable().Include(x => x.Clues).FirstOrDefault(x => x.Order == q.Order);
+                        if (wantedQuestion != null)
+                        {
+                            wantedQuestion.Hint = q.Hint;
+                            wantedQuestion.Level = q.Level;
+                            wantedQuestion.Question = q.Question;
+                            wantedQuestion.Score = q.Score;
+                            wantedQuestion.TextAnswer = q.TextAnswer;
+                            wantedQuestion.Clues = q.Clues;
+                        }
+                        else
+                        {
+                            wanted.Questions.Add(q);
+                        }
+                    }
+
+                    //var toBeRemoved = Database.Questions.AsQueryable().Where(x => x.TestItemId == wanted.Id);
+
+                    //Database.Questions.RemoveRange(toBeRemoved);
+                    //wanted.Questions = item.Questions; TODO : resolve to be removed
 
                     wanted.Requirement = item.Requirement;
                     wanted.ShortDescription = item.ShortDescription;

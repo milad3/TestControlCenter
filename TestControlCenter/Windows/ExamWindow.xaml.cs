@@ -45,8 +45,13 @@ namespace TestControlCenter.Windows
 
             startDateTime = DateTime.Now;
 
-            var imagesDir = GlobalTools.GetImagesDir(testItem);
-            GlobalValues.TestMarker = GlobalTools.LoadTestMarkerProcessor(testItem, imagesDir);
+            var testBasicInformation = new TestBasicInformation
+            {
+                ImagesDirectory = GlobalTools.GetImagesDir(testItem),
+                TestStartDateTime = DateTime.Now
+            };
+
+            GlobalValues.TestMarker = GlobalTools.LoadTestMarkerProcessor(testItem, testBasicInformation);
         }
 
         private void ViewModel_TimesUpEvent(object sender, EventArgs args) => Dispatcher.Invoke(() =>
