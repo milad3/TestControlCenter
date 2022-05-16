@@ -25,7 +25,7 @@ namespace TestControlCenter
                 EventHookConfig.Hook();
             }
 
-            Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
+            Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
 
             Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             LogoutLogin(null);

@@ -189,6 +189,13 @@ namespace ExcelTest
                         answer.PublicScore = answer.TestItemQuestion.Score;
                     }
                     break;
+                case 20:
+                    CluesMarking(answer, tolerance * .9, result);
+                    if (answer.PrivateScore > 66)
+                    {
+                        answer.PublicScore = answer.TestItemQuestion.Score;
+                    }
+                    break;
                 case 21:
                     CluesMarking(answer, tolerance, result);
                     if (answer.PrivateScore == 100)

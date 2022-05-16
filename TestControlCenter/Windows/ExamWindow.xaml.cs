@@ -48,6 +48,7 @@ namespace TestControlCenter.Windows
             var testBasicInformation = new TestBasicInformation
             {
                 ImagesDirectory = GlobalTools.GetImagesDir(testItem),
+                FilesDirectory  = GlobalTools.GetFilesDir(testItem),
                 TestStartDateTime = DateTime.Now
             };
 
@@ -96,7 +97,11 @@ namespace TestControlCenter.Windows
             var q = (TestItemQuestionViewModel)((FrameworkElement)sender).DataContext;
 
             q.IsSelected = q.IsSelected == null ? true : !q.IsSelected;
+            SelectQuestion(q);
+        }
 
+        private void SelectQuestion(TestItemQuestionViewModel q)
+        {
             ViewModel.UnSelectedQuestions(q);
 
             if (ViewModel.SelectedQuestion == q)
@@ -222,9 +227,20 @@ namespace TestControlCenter.Windows
                 return;
             }
 
-            var q = NotificationsHelper.Ask("آیا از اعلام اتمام امتحان مطمئن هستید؟", "مهم");
+            var summeryWindow = new ExamSummeryWindow(ViewModel)
+            {
+                Owner = this
+            };
+            summeryWindow.ShowDialog();
 
-            if (q != MessageBoxResult.OK)
+            if(summeryWindow.SelectedTestItemQuestion != null)
+            {
+                summeryWindow.SelectedTestItemQuestion.IsSelected = true;
+
+                SelectQuestion(summeryWindow.SelectedTestItemQuestion);
+            }
+
+            if (!summeryWindow.IsFinished)
             {
                 e.Cancel = true;
             }
@@ -245,6 +261,19 @@ namespace TestControlCenter.Windows
             var q = (TestItemQuestionViewModel)((FrameworkElement)sender).DataContext;
 
             q.Bookmarked = !q.Bookmarked;
+        }
+
+        private void FilesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var address = ViewModel.FilesHandler(sender);
+
+            if(address == null)
+            {
+                NotificationsHelper.Information("فایلی برای نمایش وجود ندارد.", "توجه");
+                return;
+            }
+
+            Process.Start(address);
         }
     }
 }

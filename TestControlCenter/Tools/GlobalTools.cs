@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using TestControlCenter.Infrastructure;
 using TestControlCenterDomain;
+using SHDocVw;
 
 namespace TestControlCenter.Tools
 {
@@ -99,6 +100,11 @@ namespace TestControlCenter.Tools
             return $"{StaticValues.RootPath}\\Files\\Tests\\{testItem.Key}\\";
         }
 
+        public static string GetFilesDir(TestItem testItem)
+        {
+            return $"{StaticValues.RootPath}\\Files\\Tests\\Raw\\{testItem.Key}\\";
+        }
+
         public static ITestMarker LoadTestMarkerProcessor(TestItem testItem, TestBasicInformation testBasicInformation)
         {
             var dll = testItem.ProcessorAddress;
@@ -133,6 +139,22 @@ namespace TestControlCenter.Tools
             }
 
             return null;
+        }
+
+        public static void CloseDirectory(string directoryName)
+        {
+            ShellWindows _shellWindows = new ShellWindows();
+            string processType;
+
+            foreach (InternetExplorer ie in _shellWindows)
+            {
+                processType = Path.GetFileNameWithoutExtension(ie.FullName).ToLower();
+
+                if (processType.Equals("explorer") && ie.LocationURL.Contains(directoryName))
+                {
+                    ie.Quit();
+                }
+            }
         }
     }
 }

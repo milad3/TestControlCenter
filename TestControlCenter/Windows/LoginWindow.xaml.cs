@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -41,7 +42,32 @@ namespace TestControlCenter.Windows
             //UsernameTextBox.Text = Username;
             //PasswordTextBox.Password = Password;
 
+            CleanUp();
+
             UsernameStudentTextBox.Focus();
+        }
+
+        private void CleanUp()
+        {
+            try
+            {
+                GlobalTools.CloseDirectory("TCC");
+
+                var dir = $"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\TCC";
+                if (Directory.Exists(dir))
+                {
+                    Directory.Delete(dir, true);
+                }
+
+                Directory.CreateDirectory(dir);
+
+                loginStudentButton.IsEnabled = true;
+            }
+            catch
+            {
+                NotificationsHelper.Error("امکان اجرای آزمون وجود ندارد خطای 400", "خطا");
+                loginStudentButton.IsEnabled = false;
+            }
         }
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)

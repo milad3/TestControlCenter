@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -103,6 +104,19 @@ namespace TestControlCenter.Windows
         private void Window_Closed(object sender, EventArgs e)
         {
             GlobalValues.ExamAltWindow = null;
+        }
+
+        private void ExamFilesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var address = ParentViewModel.FilesHandler(sender);
+
+            if (address == null)
+            {
+                NotificationsHelper.Information("فایلی برای نمایش وجود ندارد.", "توجه");
+                return;
+            }
+
+            Process.Start(address);
         }
     }
 }

@@ -20,6 +20,7 @@ namespace TestControlCenter.Models
         }
 
         readonly string imagesDir;
+        private readonly string filesDir;
         private readonly IMessageLogger logger;
 
         public TestMarkingViewModel(TestMark testMark, IMessageLogger logger)
@@ -27,6 +28,7 @@ namespace TestControlCenter.Models
             TestMark = testMark;
             this.logger = logger;
             imagesDir = GlobalTools.GetImagesDir(testMark.TestItem);
+            filesDir = GlobalTools.GetFilesDir(testMark.TestItem);
         }
 
         ITestMarker testMarker;
@@ -193,6 +195,7 @@ namespace TestControlCenter.Models
             var testBasicInformation = new TestBasicInformation
             {
                 ImagesDirectory = imagesDir,
+                FilesDirectory = filesDir,
                 TestStartDateTime = DateTime.Now
             };
 

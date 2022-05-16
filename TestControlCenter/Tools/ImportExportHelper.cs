@@ -17,6 +17,7 @@ namespace TestControlCenter.Tools
         readonly string coverDir = $"{StaticValues.RootPath}\\Files\\Images\\";
         readonly string dllDir = $"{StaticValues.RootPath}\\Files\\Processors\\";
         readonly string imagesDir = $"{StaticValues.RootPath}\\Files\\Tests\\";
+        readonly string filesDir = $"{StaticValues.RootPath}\\Files\\Tests\\Raw\\";
 
         public async Task Export(TestItem testItem, string path)
         {
@@ -54,15 +55,32 @@ namespace TestControlCenter.Tools
                 }
             }
 
-            var files = Directory.GetFiles($"{imagesDir}{testItem.Key}", "*.retadata");
-            foreach (var file in files)
+            var images = Directory.GetFiles($"{imagesDir}{testItem.Key}", "*.retadata");
+            foreach (var image in images)
             {
-                if(!File.Exists(file))
+                if(!File.Exists(image))
                 {
                     continue;
                 }
 
-                File.Copy(file, $"{parentDir}{Path.GetFileName(file)}");
+                File.Copy(image, $"{parentDir}{Path.GetFileName(image)}");
+            }
+
+            var files = Directory.GetFiles($"{filesDir}{testItem.Key}", "*.*");
+            var dir = $"{parentDir}\\Files\\";
+            if (Directory.Exists(dir))
+            {
+                Directory.Delete(dir, true);
+            }
+            Directory.CreateDirectory(dir);
+            foreach (var file in files)
+            {
+                if (!File.Exists(file))
+                {
+                    continue;
+                }
+
+                File.Copy(file, $"{parentDir}\\Files\\{Path.GetFileName(file)}");
             }
 
             ZipFile.CreateFromDirectory(exportDir, path);
@@ -90,6 +108,9 @@ namespace TestControlCenter.Tools
             var images = Directory.GetFiles(importDir, "*.retadata");
             SaveAllImages(testItem, images);
 
+            var files = Directory.GetFiles($"{importDir}\\Files", "*.*");
+            SaveAllFiles(testItem, files);
+
             testItem.AddDateTime = DateTime.Now;
 
             using (var db = new DataService())
@@ -100,6 +121,21 @@ namespace TestControlCenter.Tools
             CleanUp(importDir);
 
             return testItem;
+        }
+
+        private void SaveAllFiles(TestItem testItem, string[] files)
+        {
+            var wantedDir = $"{filesDir}{testItem.Key}";
+
+            if (!Directory.Exists(wantedDir))
+            {
+                Directory.CreateDirectory(wantedDir);
+            }
+
+            foreach (var file in files)
+            {
+                File.Copy(file, $"{wantedDir}\\{Path.GetFileName(file)}", true);
+            }
         }
 
         private void SaveAllImages(TestItem testItem, IEnumerable<string> images)

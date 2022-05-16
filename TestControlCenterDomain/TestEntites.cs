@@ -243,6 +243,8 @@ namespace TestControlCenterDomain
 
         public string ImagesDirectory { get; set; }
 
+        public string FilesDirectory { get; set; }
+
         public dynamic OtherInfo { get; set; }
 
         public string Temp { get; set; }

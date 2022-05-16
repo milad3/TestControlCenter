@@ -18,7 +18,14 @@
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
             <Rectangle Fill="#FF3CB9D4"></Rectangle>
-            <TextBox VerticalAlignment="Top" Margin="15" materialDesign:HintAssist.Hint="در سوال ها جستجو کنید..." materialDesign:TextFieldAssist.HasClearButton="True" Foreground="White" Padding="2" Background="#22FFFFFF" Text="{Binding Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="110"></ColumnDefinition>                    
+                </Grid.ColumnDefinitions>
+                <TextBox VerticalAlignment="Top" Margin="15,15,0,15" materialDesign:HintAssist.Hint="در سوال ها جستجو کنید..." materialDesign:TextFieldAssist.HasClearButton="True" Foreground="White" Padding="2" Background="#22FFFFFF" Text="{Binding Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Background="FloralWhite" materialDesign:ShadowAssist.ShadowDepth="Depth0" materialDesign:ButtonAssist.CornerRadius="2" Margin="0,-32,0,0" HorizontalAlignment="Center" FontSize="10" Grid.Column="1" Click="FilesButton_Click">فایل های آزمون</Button>
+            </Grid>
             <Border Panel.ZIndex="1" Grid.Row="1" Height="110" VerticalAlignment="Top" Margin="15,-30,15,15" CornerRadius="8">
                 <Border.Background>
                     <RadialGradientBrush>
@@ -131,7 +138,7 @@
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding Bookmarked, Mode=TwoWay}" Value="True">
                                                             <DataTrigger.Setters>
-                                                                <Setter Property="Opacity" Value=".75" />
+                                                                <Setter Property="Opacity" Value=".85" />
                                                             </DataTrigger.Setters>
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsSelected, Mode=TwoWay}" Value="True">
@@ -189,7 +196,7 @@
                                                     <Grid HorizontalAlignment="Center">
                                                         <TextBlock Text="{Binding Order}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                     </Grid>
-                                                </Border>                                                
+                                                </Border>
                                                 <TextBlock Margin="-25,3,-45,0" Grid.Column="1" Text="{Binding Question}" TextWrapping="Wrap" />
                                                 <Border TextBlock.Foreground="#999" x:Name="QuestionScoreBorder" MinWidth="45" CornerRadius="0,0,5,5" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,-24" Background="#FFF">
                                                     <WrapPanel HorizontalAlignment="Center" Margin="5, 0">
@@ -197,14 +204,20 @@
                                                             <TextBlock HorizontalAlignment="Center" Text="{Binding Score}"/>
                                                         </Viewbox>
                                                         <TextBlock Margin="2,0,2,0" Opacity=".7" VerticalAlignment="Center" HorizontalAlignment="Center" Text="نمره" FontSize="9"/>
-                                                        <materialDesign:PackIcon Grid.Column="0" Margin="0,1,0,0" Visibility="{Binding IsAnswered, Converter={StaticResource BoolToVis}}" Kind="AccountCheckOutline"></materialDesign:PackIcon>
+                                                        <Border ToolTip="پاسخ توسط کاربر ثبت شده است." Grid.Column="0" Margin="1,-10,0,0" Background="#FF3CB9D4" CornerRadius="12" Width="24" Height="24" Visibility="{Binding IsAnswered, Converter={StaticResource BoolToVis}}">
+                                                            <materialDesign:PackIcon Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Kind="AccountCheckOutline"></materialDesign:PackIcon>
+                                                        </Border>
                                                     </WrapPanel>
                                                 </Border>
-                                                <Border VerticalAlignment="Top" HorizontalAlignment="Right" Grid.ColumnSpan="3" Margin="0, -20, 0 , 0" x:Name="ToolsContainer">
-                                                    <Button materialDesign:ShadowAssist.ShadowDepth="Depth0" BorderThickness="0" Margin="0" Padding="0" Background="Transparent" Height="20" Click="BookmarkToggle_Click">
+                                                <Border VerticalAlignment="Top" HorizontalAlignment="Right" Grid.ColumnSpan="3" Margin="0, -24, -8 , 0" x:Name="ToolsContainer">
+                                                    <Button materialDesign:ShadowAssist.ShadowDepth="Depth0" BorderThickness="0" Margin="0" Padding="0" Background="Transparent" Height="30" Click="BookmarkToggle_Click">
                                                         <Grid>
-                                                            <materialDesign:PackIcon Kind="BookmarkAddOutline" Foreground="SlateBlue" Visibility="{Binding NotBookmarked, Converter={StaticResource BoolToVis}}"/>
-                                                            <materialDesign:PackIcon Kind="Bookmark" Foreground="SlateBlue" Visibility="{Binding Bookmarked, Converter={StaticResource BoolToVis}}"/>
+                                                            <materialDesign:PackIcon Width="24" Height="24" Kind="Pin" Foreground="Black" Visibility="{Binding Bookmarked, Converter={StaticResource BoolToVis}}">
+                                                                <materialDesign:PackIcon.RenderTransform>
+                                                                    <RotateTransform Angle="8"/>
+                                                                </materialDesign:PackIcon.RenderTransform>
+                                                            </materialDesign:PackIcon>
+                                                            <materialDesign:PackIcon Width="24" Height="24" Kind="PinOutline" Foreground="DimGray" Visibility="{Binding NotBookmarked, Converter={StaticResource BoolToVis}}"/>
                                                         </Grid>
                                                     </Button>
                                                 </Border>
@@ -241,7 +254,14 @@
                         <materialDesign:PackIcon Kind="ArrowLeft"></materialDesign:PackIcon>
                     </Button>
                 </WrapPanel>
-                <Button x:Name="RegisterAnswerButton" Grid.Column="2" Margin="0,0,5,0" Style="{StaticResource MaterialDesignFlatLightBgButton}" FontSize="12" Padding="10,-2,10,0" Background="#555" BorderThickness="0" Foreground="#FFF" Content="ثبت پاسخ" Click="AnswerButton_Click" />
+                <Button Visibility="{Binding IsQuestionSelected, Converter={StaticResource BoolToVis}}" x:Name="RegisterAnswerButton" Grid.Column="2" Margin="0,0,5,0" Style="{StaticResource MaterialDesignFlatLightBgButton}" FontSize="12" Padding="10,-2,10,0" Background="#555" BorderThickness="0" Foreground="#FFF" Click="AnswerButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock>ثبت پاسخ</TextBlock>
+                        <Border Opacity=".9" Margin="10,0,0,0" Padding="2" Background="FloralWhite" CornerRadius="10" Width="20" Height="20">
+                            <TextBlock FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#555" Text="{Binding SelectedQuestion.Order}"></TextBlock>
+                        </Border>
+                    </StackPanel>
+                </Button>
                 <Button x:Name="FinishButton" Grid.Column="3" Margin="0,0,10,0" Style="{StaticResource MaterialDesignFlatLightBgButton}" FontSize="12" Padding="10,-2,10,0" Background="#FFF33650" BorderThickness="0" Foreground="#FFF" Content="اتمام آزمون" Click="FinishButton_Click" />
             </Grid>
         </Grid>

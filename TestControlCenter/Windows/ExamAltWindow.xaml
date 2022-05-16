@@ -57,6 +57,9 @@
                             <Button Width="20" Height="20" materialDesign:ShadowAssist.ShadowDepth="Depth1" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}" Click="ChangeViewButton_Click">
                                 <materialDesign:PackIcon Kind="ImageSizeSelectSmall"></materialDesign:PackIcon>
                             </Button>
+                            <Button Width="20" Height="20" materialDesign:ShadowAssist.ShadowDepth="Depth1" Margin="5,0,5,0" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}" Click="ExamFilesButton_Click">
+                                <materialDesign:PackIcon Kind="FileSearch"></materialDesign:PackIcon>
+                            </Button>
                             <Button Width="20" Height="20" materialDesign:ShadowAssist.ShadowDepth="Depth1" Margin="5,0,0,0" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}" Click="PrevButton_Click">
                                 <materialDesign:PackIcon Kind="ArrowRight"></materialDesign:PackIcon>
                             </Button>

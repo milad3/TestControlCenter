@@ -56,8 +56,76 @@
   <ItemGroup>
     <Content Include="cover.jpg" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Images\" />
+    <None Include="Files\Autofill.xlsx" />
+    <None Include="Files\Book1.xlsx" />
+    <None Include="Files\Book10.xlsx" />
+    <None Include="Files\Book11.xlsx" />
+    <None Include="Files\Book12.xlsx" />
+    <None Include="Files\Book2.xlsx" />
+    <None Include="Files\Book3.xlsx" />
+    <None Include="Files\Book4.xlsx" />
+    <None Include="Files\book5.xlsx" />
+    <None Include="Files\book6.xlsx" />
+    <None Include="Files\Book7.xlsx" />
+    <None Include="Files\book8.xlsx" />
+    <None Include="Files\Book9.xlsx" />
+    <None Include="Files\chart.xlsx" />
+    <None Include="Files\climate.xlsx" />
+    <None Include="Files\error.xlsx" />
+    <None Include="Files\factor.xlsx" />
+    <None Include="Files\Freeze.xlsx" />
+    <None Include="Files\Functions.xlsx" />
+    <None Include="Files\IF.xlsx" />
+    <None Include="Files\insert.xlsx" />
+    <None Include="Files\zoom.xlsx" />
+    <None Include="Images\10c.retadata" />
+    <None Include="Images\11c1.retadata" />
+    <None Include="Images\11c2.retadata" />
+    <None Include="Images\12c.retadata" />
+    <None Include="Images\13c1.retadata" />
+    <None Include="Images\13c2.retadata" />
+    <None Include="Images\14c.retadata" />
+    <None Include="Images\15c1.retadata" />
+    <None Include="Images\15c2.retadata" />
+    <None Include="Images\15f.retadata" />
+    <None Include="Images\16c.retadata" />
+    <None Include="Images\17f.retadata" />
+    <None Include="Images\19c1.retadata" />
+    <None Include="Images\19c2.retadata" />
+    <None Include="Images\1c1.retadata" />
+    <None Include="Images\1f.retadata" />
+    <None Include="Images\20c1.retadata" />
+    <None Include="Images\20c2.retadata" />
+    <None Include="Images\20c3.retadata" />
+    <None Include="Images\21c1.retadata" />
+    <None Include="Images\21c2.retadata" />
+    <None Include="Images\22f.retadata" />
+    <None Include="Images\23f.retadata" />
+    <None Include="Images\24c1.retadata" />
+    <None Include="Images\24c2.retadata" />
+    <None Include="Images\25c.retadata" />
+    <None Include="Images\26c.retadata" />
+    <None Include="Images\2c.retadata" />
+    <None Include="Images\3c.retadata" />
+    <None Include="Images\3f.retadata" />
+    <None Include="Images\4c1.retadata" />
+    <None Include="Images\4c2.retadata" />
+    <None Include="Images\5c1.retadata" />
+    <None Include="Images\5c2.retadata" />
+    <None Include="Images\6c.retadata" />
+    <None Include="Images\6f.retadata" />
+    <None Include="Images\7c1.retadata" />
+    <None Include="Images\7c2.retadata" />
+    <None Include="Images\7c3.retadata" />
+    <None Include="Images\7f1.retadata" />
+    <None Include="Images\7f2.retadata" />
+    <None Include="Images\7f3.retadata" />
+    <None Include="Images\8c1.retadata" />
+    <None Include="Images\8c2.retadata" />
+    <None Include="Images\9c1.retadata" />
+    <None Include="Images\9c2.retadata" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

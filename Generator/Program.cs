@@ -18,6 +18,7 @@ namespace Generator
             var coverImage = @"D:\Dev\MFT\TestControlCenter\ExcelTest\cover.jpg";
             var dll = @"D:\Dev\MFT\TestControlCenter\ExcelTest\bin\Debug\ExcelTest.dll";
             var images = @"D:\Dev\MFT\TestControlCenter\ExcelTest\Images";
+            var files = @"D:\Dev\MFT\TestControlCenter\ExcelTest\Files";
 
             var test = new TestItem
             {
@@ -429,7 +430,7 @@ namespace Generator
                     },
                     new TestItemQuestion
                     {
-                        Question = "در فایل If و sheet1جمع کل فاکتور را با توجه به تعداد و مبلغ هر کالا در سلول E11 بدست آورید و در سلول E12 تابع IF تایپ کنید اگر E11 بزرگتر مساوی 300000 بود 20 درصد تخفیف و در غیر این صورت 10 درصد تخفیف محاسبه و مبلغ کل را بدست اورید.",
+                        Question = "در فایل factor و sheet1 جمع کل فاکتور را با توجه به تعداد و مبلغ هر کالا در سلول E11 بدست آورید و در سلول E12 تابع IF تایپ کنید اگر E11 بزرگتر مساوی 300000 بود 20 درصد تخفیف و در غیر این صورت 10 درصد تخفیف محاسبه و مبلغ کل را بدست اورید.",
                         Level = TestQuestionLevel.Level3,
                         Order = 17,
                         Score = 3.5,
@@ -458,7 +459,7 @@ namespace Generator
                         Level = TestQuestionLevel.Level4,
                         Order = 19,
                         Score = 4,
-                         Clues = new List<TestItemQuestionClue>
+                        Clues = new List<TestItemQuestionClue>
                         {
                             new TestItemQuestionClue
                             {
@@ -480,7 +481,27 @@ namespace Generator
                         Level = TestQuestionLevel.Level3,
                         Order = 20,
                         Score = 3.5,
-
+                        Clues = new List<TestItemQuestionClue>
+                        {
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "20c1"
+                            },
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "20c2"
+                            },
+                            new TestItemQuestionClue
+                            {
+                                Forced = true,
+                                Order = 1,
+                                ImageAddress = "20c3"
+                            }
+                        }
                     },
                     new TestItemQuestion
                     {
@@ -601,10 +622,21 @@ namespace Generator
 
             File.Copy(dll, $"{DIR}\\.processor");
 
-            var files = Directory.GetFiles(images);
-            foreach (var file in files)
+            var imagesFiles = Directory.GetFiles(images);
+            foreach (var file in imagesFiles)
             {
                 File.Copy(file, $"{DIR}\\{Path.GetFileName(file)}");
+            }
+
+            var rawFiles = Directory.GetFiles(files);
+            var rawFilesDir = $"{DIR}\\Files";
+            if(!Directory.Exists(rawFilesDir))
+            {
+                Directory.CreateDirectory(rawFilesDir);
+            }
+            foreach (var file in rawFiles)
+            {
+                File.Copy(file, $"{DIR}\\Files\\{Path.GetFileName(file)}");
             }
 
             var parent = Directory.GetParent(DIR);

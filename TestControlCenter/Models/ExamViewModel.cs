@@ -7,6 +7,9 @@ using System.Threading;
 using System.Windows;
 using TestControlCenterDomain;
 using TestControlCenter.Infrastructure;
+using TestControlCenter.Tools;
+using System.IO;
+using System.Windows.Controls;
 
 namespace TestControlCenter.Models
 {
@@ -54,6 +57,7 @@ namespace TestControlCenter.Models
             {
                 bookmarked = value;
                 OnPropertyChanged(nameof(Bookmarked));
+                OnPropertyChanged(nameof(NotBookmarked));
             }
         }
 
@@ -276,6 +280,7 @@ namespace TestControlCenter.Models
             {
                 selectedQuestion = value;
                 OnPropertyChanged(nameof(SelectedQuestion));
+                OnPropertyChanged(nameof(IsQuestionSelected));
                 OnPropertyChanged(nameof(IsThereHint));
                 GlobalValues.Question = selectedQuestion;
             }
@@ -333,6 +338,48 @@ namespace TestControlCenter.Models
 
                 return AllQuestions.Where(x => x.Question.ToLower().Contains(Filter.ToLower())).ToList();
             }
+        }
+
+        public string FilesHandler(object sender)
+        {
+            Button button = null;
+            if(sender is Button btn)
+            {
+                button = btn;
+                button.IsEnabled = false;
+            }
+
+            var filesDir = GlobalTools.GetFilesDir(TestItem);
+
+            var newDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\TCC\\{TestItem.CourseId}\\{Student.Token}";
+            if(!Directory.Exists(newDir))
+            {
+                Directory.CreateDirectory(newDir);
+            }
+
+            var files = Directory.GetFiles(filesDir, "*.*");
+            foreach (var file in files)
+            {
+                if (!File.Exists(file))
+                {
+                    continue;
+                }
+
+                var path = $"{newDir}\\{Path.GetFileName(file)}";
+                if (File.Exists(path))
+                {
+                    continue;
+                }
+
+                File.Copy(file, path);
+            }
+
+            if(button != null)
+            {
+                button.IsEnabled = true;
+            }
+
+            return newDir;
         }
     }
 }

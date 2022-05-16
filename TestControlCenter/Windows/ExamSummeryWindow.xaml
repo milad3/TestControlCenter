@@ -1,0 +1,94 @@
+﻿<Window x:Class="TestControlCenter.Windows.ExamSummeryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TestControlCenter.Windows"
+        mc:Ignorable="d"
+        FontFamily="{StaticResource MainFont}"
+        FlowDirection="RightToLeft"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Title="بازنگری آزمون" SizeToContent="Height" Width="610" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="100*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Label Margin="-5,0,0,10" Foreground="DimGray" x:Name="titleLabel"></Label>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <TextBlock>از مجموع</TextBlock>
+            <TextBlock x:Name="allQuestionsCount" Margin="3,0,3,0"></TextBlock>
+            <TextBlock>سوال آزمون، شما</TextBlock>
+            <TextBlock x:Name="answeredQuestionsCount" Margin="3,0,3,0"></TextBlock>
+            <TextBlock>سوال را پاسخ داده اید.</TextBlock>
+        </StackPanel>
+        <StackPanel Margin="0,5,0,0" Grid.Row="2" Orientation="Horizontal">
+            <TextBlock x:Name="bookmarkedQuestionsCount" Margin="0,0,3,0"></TextBlock>
+            <TextBlock>سوال توسط شما علامت گذاری شده است.</TextBlock>
+        </StackPanel>
+        <TabControl Margin="0,20,0,0" Grid.Row="3" Style="{StaticResource MaterialDesignTabControl}">
+            <TabItem IsSelected="True" Header="سوالات پاسخ داده شده">
+                <ScrollViewer Margin="5" Height="300" HorizontalScrollBarVisibility="Auto">
+                    <ListView x:Name="answeredQuestions" MouseDoubleClick="Questions_MouseDoubleClick">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="WhiteSmoke" Padding="5" CornerRadius="1">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Padding="5" Width="20" Height="20" CornerRadius="10" Background="DimGray">
+                                            <TextBlock Foreground="White" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Order}"></TextBlock>
+                                        </Border>
+                                        <TextBlock Margin="5,0,0,0" Text="{Binding Question}"></TextBlock>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem IsSelected="True" Header="سوالات پاسخ داده نشده">
+                <ScrollViewer Margin="5" Height="300" HorizontalScrollBarVisibility="Auto">
+                    <ListView x:Name="notAnsweredQuestions" MouseDoubleClick="Questions_MouseDoubleClick">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="WhiteSmoke" Padding="5" CornerRadius="1">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Padding="5" Width="20" Height="20" CornerRadius="10" Background="DimGray">
+                                            <TextBlock Foreground="White" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Order}"></TextBlock>
+                                        </Border>
+                                        <TextBlock Margin="5,0,0,0" Text="{Binding Question}"></TextBlock>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem IsSelected="True" Header="سوالات علامت گذاری شده">
+                <ScrollViewer Margin="5" Height="300" HorizontalScrollBarVisibility="Auto">
+                    <ListView x:Name="markedQuestions" MouseDoubleClick="Questions_MouseDoubleClick">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="WhiteSmoke" Padding="5" CornerRadius="1">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Padding="5" Width="20" Height="20" CornerRadius="10" Background="DimGray">
+                                            <TextBlock Foreground="White" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Order}"></TextBlock>
+                                        </Border>
+                                        <TextBlock Margin="5,0,0,0" Text="{Binding Question}"></TextBlock>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0">
+            <Button BorderThickness="0" materialDesign:ShadowAssist.ShadowDepth="Depth0" Background="Lavender" Foreground="Black" Click="NotConfirmButton_Click">برگشت به آزمون</Button>
+            <Button Margin="8,0,0,0" materialDesign:ShadowAssist.ShadowDepth="Depth0" BorderThickness="0" Background="#FFF33650" Foreground="White" Click="ConfirmButton_Click">تأیید اتمام آزمون</Button>
+        </StackPanel>
+    </Grid>
+</Window>

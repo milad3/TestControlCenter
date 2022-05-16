@@ -10,7 +10,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         WindowStartupLocation="CenterOwner"
-        Title="آزمون های برگذار شده" Height="600" Width="500" MinHeight="300" MinWidth="450" Loaded="Window_Loaded">
+        Title="آزمون های برگذار شده" Height="600" Width="550" MinHeight="300" MinWidth="450" Loaded="Window_Loaded">
     <Grid Background="#DDD">
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
@@ -45,6 +45,7 @@
                             <DataGridTextColumn Width="*" Header="آزمون دهنده" Binding="{Binding Student.Name}" />
                             <DataGridTextColumn Width="*" Header="آزمون" Binding="{Binding TestItem.Title}" />
                             <DataGridTextColumn Width="90" Header="تاریخ" Binding="{Binding StartDateTime, Converter={StaticResource DateTimeToPersianDateTime}}" />
+                            <DataGridTextColumn Width="70" Header="زمان" Binding="{Binding StartDateTime, StringFormat=HH:MM}" />
                             <DataGridTextColumn Header="نمره" Binding="{Binding Score}" />
                         </DataGrid.Columns>
                     </DataGrid>
